@@ -265,25 +265,9 @@ Q&A
 kubectl应用了flannel组件后默认会从谷歌镜像库中拉取镜像，所以要先停止kubelet服务，使其停止对docker的调用，在我们手动从阿里云拉取镜像后，再重启kubelet服务，k8s相关服务会自动识别镜像。在host2,host3主机kubeadm init完成后可能还会出现其它镜像包未拉取完成的情况，这时也可以采用这种方法：即停止kubelet服务，重启docker服务，手动拉取镜像【确定需要拉取那些镜像可先在主机上使用 kubectl get po –all-namespaces命令获取各主机镜像的当前状态。如READY列显示0/1表示镜像仍在拉取/创建中，可使用你下载的k8s压缩包中名称为阿里云镜像包的txt文档中的相应命令】，之后再启动kubelet服务。除flannel镜像外，理论上所有镜像在kubeadm init中都会从阿里云镜像库中拉取，所以，如果host2,host3在kubeadm init时有镜像没有拉取完成，可等待1-2分钟，如还未成功，直接重启kubelet服务即可。
 
 go-mesher
+
 func pingInstance() {
-	//log.Printf("\n****store lenth %+v******\n", len(store))
-
 	it := registry.MicroserviceInstanceCache.Items()
-	//log.Printf("********** it len: %+v **********", len(it))
-
-	for k, v := range it {
-		//v := it[k]
-		//v.Object
-		mics, ok := v.Object.([]*registry.MicroServiceInstance)
-		if !ok {
-			continue
-		}
-		for _, v := range mics {
-			log.Printf("#####1  %+v  %+v", k, v.DefaultEndpoint)
-		}
-
-	}
-
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*60)
 
 	for k, v := range it {
@@ -294,52 +278,29 @@ func pingInstance() {
 
 		okMicroServiceInstance := make([]*registry.MicroServiceInstance, 0)
 		select {
-		case <-ctx.Done()://time out
-			//log.Println(ctx.Err())
-			log.Printf("############# %+v #############", "context timeout!!!")
+		case <-ctx.Done(): //time out
+			lager.Logger.Debugf("time out !!!")
 			return
 		default:
 			for _, v := range mics {
-				if err := DialHost(v.DefaultEndpoint); err == nil { //ok
-					log.Printf("***ping %+v  %+v   %+v ", k, v.DefaultEndpoint, "ok")
-					//has = true
+				if err := ping(v.DefaultEndpoint); err == nil { //ok
+					lager.Logger.Debugf("ping %+v %+v ", v.DefaultEndpoint, "ok")
 					okMicroServiceInstance = append(okMicroServiceInstance, v)
-
-				} else {
-					log.Printf("***ping %+v  %+v   %+v", k, v.DefaultEndpoint, "error")
 				}
 
 			}
-		}
-
-		for k, v := range okMicroServiceInstance {
-			log.Printf("***okMicroServiceInstance***: %+v  %+v ", k, v.DefaultEndpoint)
 		}
 
 		registry.MicroserviceInstanceCache.Set(k, okMicroServiceInstance, 0)
 
 	}
 
-	it = registry.MicroserviceInstanceCache.Items()
-	for k, v := range it {
-		//v := it[k]
-		//v.Object
-		mics, ok := v.Object.([]*registry.MicroServiceInstance)
-		if !ok {
-			continue
-		}
-		for _, v := range mics {
-			log.Printf("#####2  %+v  %+v", k, v.DefaultEndpoint)
-		}
-
-	}
-
 }
 
-func DialHost(add string) error {
+func ping(add string) error {
 	conn, err := net.DialTimeout("tcp", add, time.Second*5)
 	if err != nil {
-		log.Printf("ping error: %s\n", err)
+		lager.Logger.Debugf("ping %+v %+v ", add, err)
 		return err
 	}
 	defer conn.Close()
