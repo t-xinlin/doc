@@ -266,6 +266,18 @@ kubectl应用了flannel组件后默认会从谷歌镜像库中拉取镜像，所
 
 go-mesher
 
+if index != common.LatestVersion {
+		if v, ok := store[index]; ok {
+			registry.MicroserviceInstanceCache.Set(latestKey, v, 0)
+			lager.Logger.Debugf("Cached [%d] Instances of service [%s]", len(store[index]), latestKey)
+		}
+	}
+
+	pingInstance()
+	
+	
+	
+
 func pingInstance() {
 	it := registry.MicroserviceInstanceCache.Items()
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*60)
