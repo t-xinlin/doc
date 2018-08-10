@@ -701,3 +701,597 @@ func Benchmark_iota(testB *testing.B) {
 	fmt.Println("pb=", pb)
 }
 
+func Benchmark_ping(testB *testing.B) {
+	//store := make(map[string]string, 0)
+	//store["a"] = "1"
+	//store["b"] = "2"
+	//store["c"] = "3"
+	//store["d"] = "4"
+	//
+	//log.Printf("*****2*****%+v", store["c"])
+	//
+	//store = make(map[string]string, 0)
+	//
+	//v, ok := store["c"]
+	//
+	//log.Printf("****2******v= %+v,  ok=%+v", v, ok)
+	//
+	////---------------------------------------------------------------
+	//
+	//h1 := "rest://100.101.197.164:30101/"
+	//u, err := url.Parse(h1)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//raddr, err := net.ResolveIPAddr("ip", "100.101.197.164")
+	//
+	//if err != nil {
+	//	fmt.Printf("Fail to resolve %s, %s\n", u.Host, err)
+	//	return
+	//}
+	//
+	//fmt.Printf("Ping %s (%s):\n\n", raddr.String(), u.Host)
+	//
+	//for i := 1; i < 6; i++ {
+	//	if err = sendICMPRequest(getICMP(uint16(i)), raddr); err != nil {
+	//		fmt.Printf("Error: %s\n", err)
+	//	}
+	//	time.Sleep(2 * time.Second)
+	//}
+
+	//var (
+	//	icmp   ICMP
+	//	laddr  = net.IPAddr{IP: net.ParseIP("0.0.0.0")}
+	//	raddr, _ = net.ResolveIPAddr("ip", h1)
+	//	)
+	//	conn, err := net.DialIP("ip4:icmp", &laddr, raddr)
+	//	if err != nil {
+	//		fmt.Println(err.Error())
+	//		return
+	//	}
+	//	defer conn.Close()
+
+	//我们将解析这个 URL 示例，它包含了一个 scheme，认证信息，主机名，端口，路径，查询参数和片段。
+	////s := "postgres://user:pass@host.com:5432/path?k=v#f"
+	//s := "rest://100.101.197.164:30101/"
+	////解析这个 URL 并确保解析没有出错。
+	//u, err := url.Parse(s)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	////fmt.Printf("----------%+v, %+v, %+v, %+v", u.Host, u.Port())
+	//h := strings.Split(u.Host, ":")
+	//fmt.Println(h[0])
+	//fmt.Println(h[1])
+
+	//直接访问 scheme。
+	//fmt.Println(u.Scheme)
+	////User 包含了所有的认证信息，这里调用 Username和 Password 来获取独立值。
+	//fmt.Println(u.User)
+	//fmt.Println(u.User.Username())
+	//p, _ := u.User.Password()
+	//fmt.Println(p)
+	////Host 同时包括主机名和端口信息，如过端口存在的话，使用 strings.Split() 从 Host 中手动提取端口。
+	//fmt.Println(u.Host)
+	//h := strings.Split(u.Host, ":")
+	//fmt.Println(h[0])
+	//fmt.Println(h[1])
+	////这里我们提出路径和查询片段信息。
+	//fmt.Println(u.Path)
+	//fmt.Println(u.Fragment)
+	////要得到字符串中的 k=v 这种格式的查询参数，可以使用 RawQuery 函数。你也可以将查询参数解析为一个map。已解析的查询参数 map 以查询字符串为键，对应值字符串切片为值，所以如何只想得到一个键对应的第一个值，将索引位置设置为 [0] 就行了。
+	//fmt.Println(u.RawQuery)
+	//m, _ := url.ParseQuery(u.RawQuery)
+	//fmt.Println(m)
+	//fmt.Println(m["k"][0])
+
+	//conn, err := net.DialIP("ip4:icmp", nil, destAddr)
+
+	//conn, err := net.Dial("tcp", "100.101.197.164:30101")
+	//if err != nil {
+	//	fmt.Printf("Fail to connect to remote host: %s\n", err)
+	//	return err
+	//}
+	//defer conn.Close()
+	//
+	//var buffer bytes.Buffer
+	//binary.Write(&buffer, binary.BigEndian, icmp)
+	//
+	//if _, err := conn.Write(buffer.Bytes()); err != nil {
+	//	fmt.Printf("Write")
+	//	return err
+	//}
+	//
+	//tStart := time.Now()
+	//
+	//conn.SetReadDeadline((time.Now().Add(time.Second * 2)))
+	//
+	//recv := make([]byte, 1024)
+	//receiveCnt, err := conn.Read(recv)
+	//
+	//if err != nil {
+	//	fmt.Printf("Read")
+	//	return
+	//}
+	//
+	//tEnd := time.Now()
+	//duration := tEnd.Sub(tStart).Nanoseconds() / 1e6
+	//
+	//fmt.Printf("%d bytes from %s: seq=%d time=%dms\n", receiveCnt, destAddr.String(), icmp.SequenceNum, duration)
+}
+
+func Benchmark_channel1(testB *testing.B) {
+	//var wg sync.WaitGroup
+	//var urls = []string{
+	//	"http://www.google.com",
+	//	"http://www.google.org",
+	//	"http://www.baidu.com",
+	//	"http://www.baidu.com",
+	//	"http://www.baidu.com",
+	//}
+
+	cacheChan := make(chan struct{}, 5)
+
+	for i := 0; i < 5; i++ {
+		cacheChan <- struct{}{}
+	}
+
+	go func() {
+		for {
+			cacheChan <- struct{}{}
+			//defer wg.Add(-1)
+		}
+	}()
+
+	var temp = make(chan struct{})
+	go func() {
+		for msg := range cacheChan {
+			select {
+			case temp <- msg:
+				log.Printf("case----")
+			default:
+				//err := WriteMessageToBackend(&msgBuf, msg, c.backend)
+				//if err != nil {
+				//	// ... handle errors ...
+				//}
+				log.Printf("default----")
+			}
+		}
+	}()
+
+	//for i := 0; i < 5; i++ {
+	//	cacheChan <- struct{}{}
+	//}
+	//
+	//for _, url := range urls {
+	//	<-cacheChan
+	//	wg.Add(1)
+	//	go func(url string) {
+	//		cacheChan <- struct{}{}
+	//		time.Sleep(time.Second * 2)
+	//		fmt.Printf(">>>>>>>>>  %+v \n", url)
+	//
+	//		defer wg.Add(-1)
+	//	}(url)
+	//}
+
+	//defer close(cacheChan)
+	//wg.Wait()
+
+	for ; ; {
+		i := 0
+		i++
+	}
+	fmt.Printf(">>>>>>>>>> over \n")
+
+}
+
+var logg *log.Logger
+
+func someHandler() {
+	//ctx, _ := context.WithTimeout(context.Background(), time.Second*5)
+	doStuff()
+
+	//10秒后取消doStuff
+	//time.Sleep(10 * time.Second)
+
+}
+
+//每1秒work一下，同时会判断ctx是否被取消了，如果是就退出
+//func doStuff(ctx context.Context) {
+func doStuff() {
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
+	//time.Sleep(1 * time.Second)
+	//is_out := false
+	logg.Printf("start")
+	//go func() {
+	//	for {
+	//		if is_out {
+	//			return
+	//		}
+	//		time.Sleep(10 * time.Second)
+	//	}
+	//
+	//}()
+
+	select {
+	case <-ctx.Done():
+		logg.Printf("done-timeout")
+		//is_out = true
+		//return
+		//default:
+		//	logg.Printf("work")
+		//	//time.Sleep(10 * time.Second)
+		//	//time.Sleep(20 * time.Second)
+		//	time.Sleep(1 * time.Second)
+	}
+
+	logg.Printf("end")
+}
+
+func Benchmark_context(testB *testing.B) {
+	logg = log.New(os.Stdout, "", log.Ltime)
+	someHandler()
+	logg.Printf("finish")
+}
+
+func context_withTimeout(is_first *bool, prev_map *map[string]string) {
+	rand.Seed(int64(time.Now().Nanosecond()))
+	ch := make(chan bool)
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+
+	go func() {
+		if *is_first {
+			(*prev_map)["a"] = "1"
+		} else {
+			(*prev_map)["a"] = "2"
+		}
+		time.Sleep(time.Duration(rand.Intn(15)) * time.Second)
+		ch <- true
+	}()
+
+	select {
+	case <-ch:
+		*is_first = false
+		(*prev_map)["b"] = "fast"
+		return
+	case <-ctx.Done():
+		*is_first = true
+		(*prev_map)["b"] = "slow"
+		return
+	}
+}
+
+func longRunningCalculation(timeCost int) chan string {
+	result := make(chan string)
+	go func() {
+		time.Sleep(time.Second * (time.Duration(timeCost)))
+		result <- "Done"
+	}()
+	return result
+}
+
+func jobWithTimeoutHandler() {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	//defer cancel()
+
+	select {
+	case <-ctx.Done():
+		//log.Println(ctx.Err())
+		log.Printf("done-timeout")
+		return
+	case <-longRunningCalculation(3):
+		log.Printf("work finish")
+	}
+	return
+}
+
+func jobWithTimeoutHandler1() {
+
+	for {
+		time.Sleep(time.Duration(2 * time.Second))
+		ctx, _ := context.WithTimeout(context.Background(), 7*time.Second)
+		//defer cancel()
+
+		arr := make([]int, 5)
+
+		for i, _ := range arr {
+			log.Printf("---%+v", i)
+			select {
+			//case <-time.After(time.Second * 5):
+			//	log.Printf("############# %+v #############", "time after!!!")
+			case <-ctx.Done():
+				//log.Println(ctx.Err())
+				log.Printf("---%+v", "context timeout!!!")
+				goto loop
+				//return
+				//case <-longRunningCalculation(3):
+				//	log.Printf("work finish")
+			default:
+				t := time.Duration(rand.Intn(5))
+				log.Printf("---ping %+v", t)
+				time.Sleep(time.Duration(t * time.Second))
+
+
+			}
+		}
+	loop:
+		log.Printf("---%+v ", "finish!!!")
+	}
+
+}
+
+func Benchmark_context_withTimeout(testB *testing.B) {
+	jobWithTimeoutHandler1()
+	return
+	is_first := true
+	prev_map := make(map[string]string)
+	for {
+		context_withTimeout(&is_first, &prev_map)
+		time.Sleep(time.Second)
+		log.Println(prev_map, is_first)
+	}
+}
+
+func delte_array(arr []string, i int) (result []string) {
+	index := 0
+	endIndex := len(arr) - 1
+	result = make([]string, 0)
+
+	for k, _ := range arr {
+		if k == i {
+			result = append(result, arr[index:k]...)
+			index = k + 1
+		} else if k == endIndex {
+			result = append(result, arr[index:endIndex+1]...)
+		}
+	}
+
+	return result
+}
+func Benchmark_array(testB *testing.B) {
+	var s = []string{"ca", "ab", "ec", "ca", "ab", "ec", "ca", "ab", "ab"}
+	log.Printf("befor %+v", s)
+	t := delte_array(s, 9)
+	log.Printf("after %+v", t)
+}
+
+func Contains(l *list.List, value interface{}) (bool, *list.Element) {
+	for e := l.Front(); e != nil; e = e.Next() {
+		if e.Value == value {
+			return true, e
+		}
+	}
+	return false, nil
+}
+func Benchmark_list(testB *testing.B) {
+	l := list.New()
+	l.PushBack(1)
+	l.PushBack(2)
+	l.PushBack(3)
+	l.PushBack(4)
+	l.PushBack(5)
+	l.PushBack(6)
+	l.PushBack(7)
+	l.PushBack(8)
+	l.PushBack(9)
+	log.Printf("befor list : %+v", l)
+	if contain, e := Contains(l, 9); contain {
+		l.Remove(e)
+	}
+	log.Printf("after list : %+v", l)
+}
+
+func get() []byte {
+	raw := make([]byte, 10000)
+	fmt.Println(len(raw), cap(raw), &raw[0]) //prints: 10000 10000 <byte_addr_x>
+	return raw[:3]
+}
+
+func Benchmark_point(testB *testing.B) {
+
+	data := []*struct{ num int }{{1}, {2}, {3}}
+
+	for _, v := range data {
+		v.num *= 10
+	}
+
+	fmt.Println(data[0], data[1], data[2])            //prints &{10} &{20} &{30}
+	fmt.Printf("\n-------------------------------\n") //prints &{10} &{20} &{30}
+	data1 := get()
+	fmt.Println(len(data1), cap(data1), &data1[0]) //prints: 3 10000 <byte_addr_x>
+}
+
+func Benchmark_point1(testB *testing.B) {
+	s1 := []int{1, 2, 3}
+	fmt.Println(len(s1), cap(s1), s1) //prints 3 3 [1 2 3]
+
+	s2 := s1[1:]
+	fmt.Println(len(s2), cap(s2), s2) //prints 2 2 [2 3]
+
+	for i := range s2 {
+		s2[i] += 20
+	}
+
+	//still referencing the same array
+	fmt.Println(s1) //prints [1 22 23]
+	fmt.Println(s2) //prints [22 23]
+
+	s2 = append(s2, 4)
+
+	for i := range s2 {
+		s2[i] += 10
+	}
+
+	//s1 is now "stale"
+	fmt.Println(s1) //prints [1 22 23]
+	fmt.Println(s2) //prints [32 33 14]
+}
+
+type field struct {
+	name string
+}
+
+func (p *field) print() {
+	fmt.Println(p.name)
+}
+
+func Benchmark_point2(testB *testing.B) {
+	data := []field{{"one"}, {"two"}, {"three"}}
+
+	for _, v := range data {
+		go v.print()
+	}
+
+	time.Sleep(3 * time.Second)
+	//goroutines print: three, three, three
+
+	//data := []field{{"one"},{"two"},{"three"}}
+	//for _,v := range data {
+	//	v := v
+	//	go v.print()
+	//}
+	//
+	//time.Sleep(3 * time.Second)
+	//goroutines print: one, two, three
+
+	//data := []*field{{"one"}, {"two"}, {"three"}}
+	//for _, v := range data {
+	//	go v.print()
+	//}
+	//time.Sleep(3 * time.Second)
+
+}
+
+func Benchmark_defer1(testB *testing.B) {
+	var i int = 1
+
+	defer fmt.Println("result =>", func() int { return i * 2 }())
+	i++
+	//prints: result => 2 (not ok if you expected 4)
+}
+
+func Benchmark_append(testB *testing.B) {
+	var s []int
+	s = append(s, 1)
+	log.Printf("------------>>>>>>>>>>>>>>> %+v", s)
+}
+
+func Test_fallthrough(t *testing.T) {
+	isSpace := func(char byte) bool {
+		switch char {
+		case ' ':       // 空格符会直接 break，返回 false // 和其他语言不一样
+			fallthrough // 返回 true
+			//case '\n':
+
+		case '\t':
+			return true
+		}
+		return false
+	}
+	fmt.Println(isSpace('\t')) // true
+	fmt.Println(isSpace(' '))  // false
+
+}
+
+func Test_XOR(t *testing.T) {
+	var a uint8 = 0x82
+	var b uint8 = 0x02
+	fmt.Printf("%08b [A]\n", a)
+	fmt.Printf("%08b [B]\n", b)
+
+	fmt.Printf("%08b (NOT B)\n", ^b)
+	fmt.Printf("%08b ^ %08b = %08b [B XOR 0xff]\n", b, 0xff, b^0xff)
+
+	fmt.Printf("%08b ^ %08b = %08b [A XOR B]\n", a, b, a^b)
+	fmt.Printf("%08b & %08b = %08b [A AND B]\n", a, b, a&b)
+	fmt.Printf("%08b &^%08b = %08b [A 'AND NOT' B]\n", a, b, a&^b)
+	fmt.Printf("%08b&(^%08b)= %08b [A AND (NOT B)]\n", a, b, a&(^b))
+
+}
+
+// 状态名称可能是 int 也可能是 string，指定为 json.RawMessage 类型
+func Test_json(t *testing.T) {
+	records := [][]byte{
+		[]byte(`{"status":200, "tag":"one"}`),
+		[]byte(`{"status":"ok", "tag":"two"}`),
+	}
+
+	for idx, record := range records {
+		var result struct {
+			StatusCode uint64
+			StatusName string
+			Status     json.RawMessage `json:"status"`
+			Tag        string          `json:"tag"`
+		}
+
+		err := json.NewDecoder(bytes.NewReader(record)).Decode(&result)
+		//checkError(err)
+
+		var name string
+		err = json.Unmarshal(result.Status, &name)
+		if err == nil {
+			result.StatusName = name
+		}
+
+		var code uint64
+		err = json.Unmarshal(result.Status, &code)
+		if err == nil {
+			result.StatusCode = code
+		}
+
+		fmt.Printf("[%v] result => %+v\n", idx, result)
+	}
+}
+
+//
+//var channel chan int = make(chan int)
+//// 或
+//channel := make(chan int)
+
+func Test_channel(t *testing.T) {
+	var messages chan string = make(chan string)
+	go func(message string) {
+		messages <- message // 存消息
+	}("Ping!")
+
+	fmt.Println(<-messages) // 取消息
+}
+
+var complete chan int = make(chan int)
+
+func loop1() {
+	for i := 0; i < 10; i++ {
+		fmt.Printf("%d\n", i)
+		time.Sleep(time.Second)
+	}
+
+	complete <- 0 // 执行完毕了，发个消息
+}
+
+func Test_channel_1(t *testing.T) {
+	go loop1()
+	<-complete // 直到线程跑完, 取到消息. 在此阻塞住
+
+}
+
+var ch chan int = make(chan int)
+
+func foo(id int) { //id: 这个routine的标号
+	ch <- id
+}
+
+func Test_channel_2(t *testing.T) {
+	// 开启5个routine
+	for i := 0; i < 5; i++ {
+		go foo(i)
+	}
+
+	// 取出信道中的数据
+	for i := 0; i < 5; i++ {
+		time.Sleep(time.Second)
+		fmt.Printf("%d\n", <-ch)
+	}
+}
