@@ -2004,3 +2004,214 @@ func Test_Iter(t *testing.T) {
 type People1 interface {
 	Speak(string) string
 }
+
+type Stduent struct{}
+
+func (stu *Stduent) Speak(think string) (talk string) {
+	if think == "bitch" {
+		talk = "You are a good boy"
+	} else {
+		talk = "hi"
+	}
+	return
+}
+
+func Test_oop_interface(t *testing.T) {
+	var peo People1 = &Stduent{}
+	think := "bitch"
+	fmt.Println(peo.Speak(think))
+}
+
+//考点：golang的方法集
+//解答：
+//编译不通过！ 做错了！？说明你对golang的方法集还有一些疑问。 一句话：golang的方法集仅仅影响接口实现和方法表达式转化，与通过实例或者指针调用方法无关。
+
+//11. 以下代码打印出来什么内容，说出为什么。
+
+type People2 interface {
+	Show()
+}
+
+type Student struct{}
+
+func (stu *Student) Show() {
+
+}
+
+func live() People2 {
+	var stu *Student
+	return stu
+}
+
+func Test_oop_interface22(t *testing.T) {
+	if live() == nil {
+		fmt.Println("AAAAAAA")
+	} else {
+		fmt.Println("BBBBBBB")
+	}
+}
+
+//考点：interface内部结构
+//解答：
+//很经典的题！ 这个考点是很多人忽略的interface内部结构。 go中的接口分为两种一种是空的接口类似这样：
+//
+//var in interface{}
+//另一种如题目：
+//
+//type People interface {
+//	Show()
+//}
+//他们的底层结构如下：
+//
+//type eface struct {      //空接口
+//	_type *_type         //类型信息
+//	data  unsafe.Pointer //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void*)
+//}
+//type iface struct {      //带有方法的接口
+//	tab  *itab           //存储type信息还有结构实现方法的集合
+//	data unsafe.Pointer  //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void*)
+//}
+//type _type struct {
+//	size       uintptr  //类型大小
+//	ptrdata    uintptr  //前缀持有所有指针的内存大小
+//	hash       uint32   //数据hash值
+//	tflag      tflag
+//	align      uint8    //对齐
+//	fieldalign uint8    //嵌入结构体时的对齐
+//	kind       uint8    //kind 有些枚举值kind等于0是无效的
+//	alg        *typeAlg //函数指针数组，类型实现的所有方法
+//	gcdata    *byte
+//	str       nameOff
+//	ptrToThis typeOff
+//}
+//type itab struct {
+//	inter  *interfacetype  //接口类型
+//	_type  *_type          //结构类型
+//	link   *itab
+//	bad    int32
+//	inhash int32
+//	fun    [1]uintptr      //可变大小 方法集合
+//}
+//可以看出iface比eface 中间多了一层itab结构。 itab 存储_type信息和[]fun方法集，从上面的结构我们就可得出，因为data指向了nil 并不代表interface 是nil， 所以返回值并不为空，这里的fun(方法集)定义了接口的接收规则，在编译的过程中需要验证是否实现接口 结果：
+//
+//BBBBBBB
+
+//12.是否可以编译通过？如果通过，输出什么？
+func Test_type_009(t *testing.T) {
+	//i := GetValue()
+	//switch i.(type) {
+	//case int:
+	//	println("int")
+	//case string:
+	//	println("string")
+	//case interface{}:
+	//	println("interface")
+	//default:
+	//	println("unknown")
+	//}
+
+}
+
+func GetValue() int {
+	return 1
+}
+
+//解析
+//考点：type
+//编译失败，因为type只能使用在interface
+
+//13.下面函数有什么问题？
+//func funcMui(x,y int)(sum int,error){
+//	return x+y,nil
+//}
+//解析
+//考点：函数返回值命名
+//在函数有多个返回值时，只要有一个返回值有指定命名，其他的也必须有命名。 如果返回值有有多个返回值必须加上括号； 如果只有一个返回值并且有命名也需要加上括号； 此处函数第一个返回值有sum名称，第二个未命名，所以错误。
+
+//14.是否可以编译通过？如果通过，输出什么？
+
+func Test_defer_00888(t *testing.T) {
+	println(DeferFunc1(1))
+	println(DeferFunc2(1))
+	println(DeferFunc3(1))
+}
+
+func DeferFunc1(i int) (t int) {
+	t = i
+	defer func() {
+		t += 3
+	}()
+	return t
+}
+
+func DeferFunc2(i int) int {
+	t := i
+	defer func() {
+		t += 3
+	}()
+	return t
+}
+
+func DeferFunc3(i int) (t int) {
+	defer func() {
+		t += i
+	}()
+	return 2
+}
+
+//解析
+//考点:defer和函数返回值
+//需要明确一点是defer需要在函数结束前执行。 函数返回值名字会在函数起始处被初始化为对应类型的零值并且作用域为整个函数 DeferFunc1有函数返回值t作用域为整个函数，在return之前defer会被执行，所以t会被修改，返回4; DeferFunc2函数中t的作用域为函数，返回1; DeferFunc3返回3
+
+//15.是否可以编译通过？如果通过，输出什么？
+func Test_new_008888(t *testing.T) {
+	//list := new([]int)
+	//list = append(list, 1)
+	//fmt.Println(list)
+}
+
+//解析
+//考点：new
+//list:=make([]int,0)
+
+//16.是否可以编译通过？如果通过，输出什么？
+
+func Test_append_008888(t *testing.T) {
+	//s1 := []int{1, 2, 3}
+	//s2 := []int{4, 5}
+	//s1 = append(s1, s2)
+	//fmt.Println(s1)
+}
+
+//解析
+//考点：append
+//append切片时候别漏了'...'
+
+//17.是否可以编译通过？如果通过，输出什么？
+func Test_struct_compare_008888(t *testing.T) {
+	//sn1 := struct {
+	//	age  int
+	//	name string
+	//}{age: 11, name: "qq"}
+	//sn2 := struct {
+	//	age  int
+	//	name string
+	//}{age: 11, name: "qq"}
+	//
+	//if sn1 == sn2 {
+	//	fmt.Println("sn1 == sn2")
+	//}
+	//
+	//sm1 := struct {
+	//	age int
+	//	m   map[string]string
+	//}{age: 11, m: map[string]string{"a": "1"}}
+	//sm2 := struct {
+	//	age int
+	//	m   map[string]string
+	//}{age: 11, m: map[string]string{"a": "1"}}
+	//
+	//if sm1 == sm2 {
+	//	fmt.Println("sm1 == sm2")
+	//}
+}
