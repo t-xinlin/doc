@@ -1732,3 +1732,275 @@ func Test_Buy_sale(t *testing.T) {
 func Test_defer_call(t *testing.T) {
 	defer_call()
 }
+
+func defer_call() {
+	defer func() { fmt.Println("打印前") }()
+	defer func() { fmt.Println("打印中") }()
+	defer func() { fmt.Println("打印后") }()
+
+	panic("触发异常")
+}
+
+//考点：defer执行顺序
+//解答：
+//defer 是后进先出。
+//panic 需要等defer 结束后才会向上传递。 出现panic恐慌时候，会先按照defer的后入先出的顺序执行，最后才会执行panic。
+
+//2. 以下代码有什么问题，说明原因。
+
+func Test_foreachl(t *testing.T) {
+	type student struct {
+		Name string
+		Age  int
+	}
+	m := make(map[string]*student)
+	stus := []student{
+		{Name: "zhou", Age: 24},
+		{Name: "li", Age: 23},
+		{Name: "wang", Age: 22},
+	}
+	// 错误写法
+	for _, stu := range stus {
+		m[stu.Name] = &stu
+	}
+
+	for k, v := range m {
+		println(k, "错误写法=>", v.Name)
+	}
+
+	// 正确
+	for i := 0; i < len(stus); i++ {
+		m[stus[i].Name] = &stus[i]
+	}
+	for k, v := range m {
+		println(k, "正确写法=>", v.Name)
+	}
+}
+
+//知识：foreach
+//解答：
+//这样的写法初学者经常会遇到的，很危险！ 与Java的foreach一样，都是使用副本的方式。所以m[stu.Name]=&stu实际上一致指向同一个指针， 最终该指针的值为遍历的最后一个struct的值拷贝。 就像想修改切片元素的属性：
+
+//3. 下面的代码会输出什么，并说明原因
+func Test_goroutine_001(t *testing.T) {
+	runtime.GOMAXPROCS(1)
+	wg := sync.WaitGroup{}
+	wg.Add(20)
+	for i := 0; i < 10; i++ {
+		go func() {
+			fmt.Println("A: ", i)
+			wg.Done()
+		}()
+	}
+	for i := 0; i < 10; i++ {
+		go func(i int) {
+			fmt.Println("B: ", i)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+//考点：go执行的随机性和闭包
+//解答：
+//谁也不知道执行后打印的顺序是什么样的，所以只能说是随机数字。 但是A:均为输出10，B:从0~9输出(顺序不定)。 第一个go func中i是外部for的一个变量，地址不变化。遍历完成后，最终i=10。 故go func执行时，i的值始终是10。
+//
+//第二个go func中i是函数参数，与外部for中的i完全是两个变量。 尾部(i)将发生值拷贝，go func内部指向值拷贝地址。
+
+//4. 下面代码会输出什么？
+
+type People struct{}
+
+func (p *People) ShowA() {
+	fmt.Println("showA")
+	p.ShowB()
+}
+func (p *People) ShowB() {
+	fmt.Println("People showB")
+}
+
+type Teacher struct {
+	People
+}
+
+func (t *Teacher) ShowB() {
+	fmt.Println("teacher showB")
+}
+
+func oop_00() {
+	//var t People
+	t := Teacher{}
+	t.ShowA()
+	t.ShowB()
+}
+func Test_oop(t *testing.T) {
+	oop_00()
+}
+
+//知识：go的组合继承
+//解答：
+//这是Golang的组合模式，可以实现OOP的继承。 被组合的类型People所包含的方法虽然升级成了外部类型Teacher这个组合类型的方法（一定要是匿名字段），但它们的方法(ShowA())调用时接受者并没有发生变化。 此时People类型并不知道自己会被什么类型组合，当然也就无法调用方法时去使用未知的组合者Teacher类型的功能。
+
+//5. 下面代码会触发异常吗？请详细说明
+func Test_select_rand(t *testing.T) {
+	runtime.GOMAXPROCS(1)
+	int_chan := make(chan int, 1)
+	string_chan := make(chan string, 1)
+	int_chan <- 1
+	string_chan <- "hello"
+	select {
+	case value := <-int_chan:
+		fmt.Println(value)
+	case value := <-string_chan:
+		panic(value)
+	}
+}
+
+//考点：select随机性
+//解答：
+//select会随机选择一个可用通用做收发操作。 所以代码是有肯触发异常，也有可能不会。 单个chan如果无缓冲时，将会阻塞。但结合 select可以在多个chan间等待执行。有三点原则：
+//
+//select 中只要有一个case能return，则立刻执行。
+//当如果同一时间有多个case均能return则伪随机方式抽取任意一个执行。
+//如果没有一个case能return则可以执行”default”块。
+
+//6.下面代码输出什么？
+func calc(index string, a, b int) int {
+	ret := a + b
+	fmt.Println(index, a, b, ret)
+	return ret
+}
+
+//考点：defer执行顺序
+//解答：
+//这道题类似第1题 需要注意到defer执行顺序和值传递 index:1肯定是最后执行的，但是index:1的第三个参数是一个函数，所以最先被调用calc("10",1,2)==>10,1,2,3 执行index:2时,与之前一样，需要先调用calc("20",0,2)==>20,0,2,2 执行到b=1时候开始调用，index:2==>calc("2",0,2)==>2,0,2,2 最后执行index:1==>calc("1",1,3)==>1,1,3,4
+
+func Test_defer_000(t *testing.T) {
+	a := 1
+	b := 2
+	defer calc("1", a, calc("10", a, b))
+	a = 0
+	defer calc("2", a, calc("20", a, b))
+	b = 1
+}
+
+//7.请写出以下輸出内容
+func Test_append_000(t *testing.T) {
+	s := make([]int, 5)
+	fmt.Println(s)
+	s = append(s, 1, 2, 3)
+	fmt.Println(s)
+}
+
+//考点：make默认值和append
+//解答：
+//make初始化是由默认值的哦，此处默认值为0
+
+//8.下面的代码有什么问题?
+type UserAges struct {
+	ages map[string]int
+	sync.Mutex
+}
+
+func (ua *UserAges) Add(name string, age int) {
+	ua.Lock()
+	defer ua.Unlock()
+	ua.ages[name] = age
+}
+
+//func (ua *UserAges) Get(name string) int {
+//	if age, ok := ua.ages[name]; ok {
+//		return age
+//	}
+//	return -1
+//}
+
+//修改后
+func (ua *UserAges) Get(name string) int {
+	ua.Lock()
+	defer ua.Unlock()
+	if age, ok := ua.ages[name]; ok {
+		return age
+	}
+	return -1
+}
+
+func Test_map_routine(t *testing.T) {
+	u := UserAges{}
+	u.ages = make(map[string]int, 0)
+
+	tiker := time.NewTicker(time.Second * 30)
+
+	go func() {
+		i := 0
+		for {
+			i++
+			key := fmt.Sprintf("key_%d", i)
+			u.Add(key, i)
+			fmt.Printf("ADD  key=%+v, value=%+v\n", key, i)
+
+		}
+	}()
+
+	go func() {
+		time.Sleep(time.Second * 3)
+		i := 0
+		for {
+			i++
+			key := fmt.Sprintf("key_%d", i)
+			fmt.Printf("GET  key=%+v, value=%+v\n", key, u.Get(key))
+		}
+	}()
+
+	<-tiker.C
+}
+
+//考点：map线程安全
+//解答：
+//可能会出现fatal error: concurrent map read and map write. 修改一下看看效果
+
+//9. 下面的迭代会有什么问题？
+type threadSafeSet struct {
+	sync.RWMutex
+	s []interface{}
+}
+
+func (set *threadSafeSet) Iter() <-chan interface{} {
+	// ch := make(chan interface{}) // 解除注释看看！
+	ch := make(chan interface{}, len(set.s))
+	go func() {
+		set.RLock()
+
+		for elem, value := range set.s {
+			ch <- elem
+			fmt.Printf("Iter:%+v  %+v\n", elem, value)
+		}
+
+		close(ch)
+		set.RUnlock()
+
+	}()
+	return ch
+}
+
+func Test_Iter(t *testing.T) {
+	th := threadSafeSet{
+		s: []interface{}{"1", "2"},
+	}
+	//v := <-th.Iter()
+
+	for v := range th.Iter() {
+		fmt.Printf("%+v %+v\n", "ch", v)
+	}
+
+}
+
+//考点：chan缓存池
+//解答：
+//看到这道题，我也在猜想出题者的意图在哪里。 chan?sync.RWMutex?go?chan缓存池?迭代? 所以只能再读一次题目，就从迭代入手看看。 既然是迭代就会要求set.s全部可以遍历一次。但是chan是为缓存的，那就代表这写入一次就会阻塞。 我们把代码恢复为可以运行的方式，看看效果
+
+//10. 以下代码能编译过去吗？为什么？
+
+type People1 interface {
+	Speak(string) string
+}
