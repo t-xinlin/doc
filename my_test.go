@@ -1295,3 +1295,440 @@ func Test_channel_2(t *testing.T) {
 		fmt.Printf("%d\n", <-ch)
 	}
 }
+
+
+func Test_channel_3(t *testing.T) {
+	ch := make(chan int, 3)
+	ch <- 1
+	fmt.Printf("go1\n") // 1
+	ch <- 2
+	fmt.Printf("go2\n") // 2
+	ch <- 3
+	fmt.Printf("go3\n")                       // 3
+	fmt.Printf("-------------------------\n") // 3
+	fmt.Printf("go%d\n", <-ch)                // 1
+	fmt.Printf("go%d\n", <-ch)                // 2
+	fmt.Printf("go%d\n", <-ch)                // 3
+
+}
+
+//在类型断言语句中，断言失败则会返回目标类型的“零值”，断言变量与原来变量混用可能出现异常情况：
+func Test_asset1(t *testing.T) {
+	var data interface{} = "great"
+
+	// data 混用
+	if data, ok := data.(int); ok {
+		fmt.Println("[is an int], data: ", data)
+	} else {
+		fmt.Println("[not an int], data: ", data) // [isn't a int], data:  0
+	}
+
+}
+
+func Test_asset2(t *testing.T) {
+	var data interface{} = "great"
+
+	if res, ok := data.(int); ok {
+		fmt.Println("[is an int], data: ", res)
+	} else {
+		fmt.Println("[not an int], data: ", data) // [not an int], data:  great
+	}
+
+}
+
+type data struct {
+	name string
+}
+
+type printer interface {
+	print()
+}
+
+func (p *data) print() {
+	fmt.Println("name: ", p.name)
+}
+
+//使用指针作为方法的 receiver
+//只要值是可寻址的，就可以在值上直接调用指针方法。即是对一个方法，它的 receiver 是指针就足矣。
+
+//但不是所有值都是可寻址的，比如 map 类型的元素、通过 interface 引用的变量：
+func Test_point(t *testing.T) {
+	d1 := data{"one"}
+	d1.print() // d1 变量可寻址，可直接调用指针 receiver 的方法
+
+	//var in printer = data{"two"}
+	//in.print() // 类型不匹配
+
+	//m := map[string]data{
+	//	"x": data{"three"},
+	//}
+	//m["x"].print() // m["x"] 是不可寻址的    // 变动频繁
+}
+
+//如果 map 一个字段的值是 struct 类型，则无法直接更新该 struct 的单个字段：
+// 无法直接更新 struct 的字段值
+//因为 map 中的元素是不可寻址的。需区分开的是，slice 的元素可寻址
+func Test_uptate_map(t *testing.T) {
+	//m := map[string]data{
+	//	"x": {"Tom"},
+	//}
+	//m["x"].name = "Jerry"
+
+	s := []data{{"Tom"}, {name: "Tonny"}}
+	s[0].name = "Jerry"
+	fmt.Println(s) // [{Jerry}]
+
+	m := map[string]*data{
+		"x": {"Tom"},
+	}
+
+	m["x"].name = "Jerry" // 直接修改 m["x"] 中的字段
+	fmt.Println(m["x"])   // &{Jerry}
+
+	//m = map[string]*data{
+	//	"x": {"Tom"},
+	//}
+	//m["z"].name = "what???"//报错
+	//fmt.Println(m["x"])
+}
+
+//53. nil interface 和 nil interface 值
+//虽然 interface 看起来像指针类型，但它不是。interface 类型的变量只有在类型和值均为 nil 时才为 nil
+//
+//如果你的 interface 变量的值是跟随其他变量变化的（雾），与 nil 比较相等时小心：
+
+func Test_interface_nil(t *testing.T) {
+	var data *byte
+	var in interface{}
+
+	fmt.Println(data, data == nil) // <nil> true
+	fmt.Println(in, in == nil)     // <nil> true
+
+	in = data
+	fmt.Println(in, in == nil) // <nil> false    // data 值为 nil，但 in 值不为 nil
+	fmt.Printf("=========%+v", in)
+}
+
+//如果你的函数返回值类型是 interface，更要小心这个坑：
+// 错误示例
+func Test_interface_nil_1(t *testing.T) {
+	doIt := func(arg int) interface{} {
+		var result *struct{} = nil
+		if arg > 0 {
+			result = &struct{}{}
+		}
+		return result
+	}
+
+	if res := doIt(-1); res != nil {
+		fmt.Println("Good result: ", res) // Good result:  <nil>
+		fmt.Printf("%T\n", res)           // *struct {}    // res 不是 nil，它的值为 nil
+		fmt.Printf("%v\n", res)           // <nil>
+	}
+}
+
+// 正确示例
+func Test_interface_nil_2(t *testing.T) {
+	doIt := func(arg int) interface{} {
+		var result *struct{} = nil
+		if arg > 0 {
+			result = &struct{}{}
+		} else {
+			return nil // 明确指明返回 nil
+		}
+		return result
+	}
+
+	if res := doIt(-1); res != nil {
+		fmt.Println("Good result: ", res)
+	} else {
+		fmt.Println("Bad result: ", res) // Bad result:  <nil>
+	}
+}
+
+//type data1 struct {
+//	Name string
+//}
+
+func chtest() {
+
+}
+
+// channel
+func Test_channel_02(t *testing.T) {
+	ch := make(chan int, 5)
+	//ch1 := make(chan int, 5)
+	go func() {
+		tick := time.NewTicker(time.Second * 2)
+		i := 0
+		for {
+			i++
+			//	ch <- i
+			fmt.Printf("Tick\n")
+			<-tick.C
+		}
+
+	}()
+	j := 0
+	tick := time.NewTicker(time.Second * 2)
+	for {
+		j++
+		fmt.Printf("j: %+v\n", j)
+		select {
+		case <-tick.C:
+			fmt.Printf("tick.C: %+v\n", j)
+
+		case v := <-ch:
+			fmt.Printf("ch: %+v\n", v)
+			//default:
+			//	fmt.Printf("default\n")
+
+			//default:
+			//	fmt.Printf("default\n")
+		}
+	}
+
+}
+
+//golang读取关闭channel遇到的问题/如何优雅关闭channel
+func TestReadFromClosedChan(t *testing.T) {
+	asChan := func(vs ...int) <-chan int {
+		c := make(chan int)
+		go func() {
+			for _, v := range vs {
+				c <- v
+				time.Sleep(time.Second)
+			}
+			close(c)
+		}()
+		return c
+	}
+	merge := func(a, b <-chan int) <-chan int {
+		c := make(chan int)
+		go func() {
+			for {
+				select {
+				case v := <-a:
+					c <- v
+				case v := <-b:
+					c <- v
+				}
+			}
+		}()
+		return c
+	}
+
+	a := asChan(1, 3, 5, 7)
+	b := asChan(2, 4, 6, 8)
+	c := merge(a, b)
+	for v := range c {
+		fmt.Println(v)
+	}
+}
+
+//   chan<- //只写
+func counter(out chan<- int) {
+	defer close(out)
+	for i := 0; i < 100; i++ {
+		fmt.Printf("生产%+v\n", i)
+		out <- i //如果对方不读 会阻塞
+		time.Sleep(time.Second * 1)
+	}
+}
+
+//   <-chan //只读
+func printer1(in <-chan int) {
+	for {
+		for num := range in {
+			fmt.Printf("消费%+v\n", num)
+		}
+	}
+
+}
+
+//chan
+func TestChan(t *testing.T) {
+	//ticker := time.NewTicker(time.Second * 50)
+
+	ch := make(chan int) //   chan   //读写
+
+	go counter(ch)  //生产者
+	go printer1(ch) //消费者
+
+	//<-ticker.C
+	<-time.After(time.Second * 10)
+	fmt.Println("done")
+}
+
+func TestDefer(t *testing.T) {
+	a1()
+	b1()
+	c := c1()
+	fmt.Printf("c= %+v\n", c)
+
+}
+
+//规则一 当defer被声明时，其参数就会被实时解析
+//我们通过以下代码来解释这条规则:
+func a1() {
+	i := 0
+	defer fmt.Printf("a1() run i=%+v\n", i)
+	i++
+	return
+}
+
+func b1() {
+	for i := 0; i < 4; i++ {
+		defer fmt.Printf("b1 i= %+v\n", i)
+	}
+}
+
+//输出结果是12. 在开头的时候，我们说过defer是在return调用之后才执行的。 这里需要明确的是defer代码块的作用域仍然在函数之内，结合上面的函数也就是说，defer的作用域仍然在c函数之内。因此defer仍然可以读取c函数内的变量(如果无法读取函数内变量，那又如何进行变量清除呢....)。
+//当执行return 1 之后，i的值就是1. 此时此刻，defer代码块开始执行，对i进行自增操作。 因此输出2.
+//掌握了defer以上三条使用规则，那么当我们遇到defer代码块时，就可以明确得知defer的预期结果。
+func c1() (i int) {
+	defer func() {
+		i++
+	}()
+	i = 1
+	return 8
+}
+
+func Test_IP_PORT(t *testing.T) {
+	url1 := fmt.Sprintf("http://%s%s/v1/mesher/health", "127.0.0.1", ":30102")
+
+	fmt.Printf("kkkkkkkkk-======%+v\n", url1)
+
+	//我们将解析这个 URL 示例，它包含了一个 scheme，认证信息，主机名，端口，路径，查询参数和片段。
+	//s := "postgres://user:pass@host.com:5432/path?k=v#f"
+
+	s := "http://197.1.0.1:9999"
+
+	//解析这个 URL 并确保解析没有出错。
+	u, err := url.Parse(s)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(u.Host)
+	h1 := strings.Split(u.Host, ":")
+	fmt.Println(h1[0])
+	fmt.Println(h1[1])
+
+	return
+
+	//直接访问 scheme。
+	fmt.Println(u.Scheme)
+	//User 包含了所有的认证信息，这里调用 Username和 Password 来获取独立值。
+	fmt.Println(u.User)
+	fmt.Println(u.User.Username())
+	p, _ := u.User.Password()
+	fmt.Println(p)
+	//Host 同时包括主机名和端口信息，如过端口存在的话，使用 strings.Split() 从 Host 中手动提取端口。
+	fmt.Println(u.Host)
+	h := strings.Split(u.Host, ":")
+	fmt.Println(h[0])
+	fmt.Println(h[1])
+	//这里我们提出路径和查询片段信息。
+	fmt.Println(u.Path)
+	fmt.Println(u.Fragment)
+	//要得到字符串中的 k=v 这种格式的查询参数，可以使用 RawQuery 函数。你也可以将查询参数解析为一个map。已解析的查询参数 map 以查询字符串为键，对应值字符串切片为值，所以如何只想得到一个键对应的第一个值，将索引位置设置为 [0] 就行了。
+	fmt.Println(u.RawQuery)
+	m, _ := url.ParseQuery(u.RawQuery)
+	fmt.Println(m)
+	fmt.Println(m["k"][0])
+}
+
+func Lookup(meta []int32, target int32) {
+	left := 0
+	right := len(meta) - 1
+	for i := 0; i < len(meta); i++ {
+		if meta[left]+meta[right] > target {
+			right--
+		} else if meta[left]+meta[right] < target {
+			left++
+		} else {
+			fmt.Println(fmt.Sprintf("%d, %d", meta[left], meta[right]))
+			return
+		}
+	}
+	fmt.Println("未找到匹配数据")
+}
+
+//1.如何在一个给定有序数组中找两个和为某个定值的数，要求时间复杂度为O(n), 比如给｛1，2，4，5，8，11，15｝和15？
+func Test_Lookup(t *testing.T) {
+	fmt.Printf("1<<31-1 = %d", 1<<31-1)
+	arr := []int32{1, 2, 3, 6, 8, 9, 11, 12, 14, 15, 16, 18, 20, 23, 35, 27, 29, 30, 31, 32, 39, 45, 46, 58, 59, 60, 62}
+	Lookup(arr, 58)
+}
+
+//2.给定一个数组代表股票每天的价格，请问只能买卖一次的情况下，最大化利润是多少？
+// 日期不重叠的情况下，可以买卖多次呢？ 输入：{100,80,120,130,70,60,100,125}，
+// 只能买一次：65(60买进，125卖出)；
+// 可以买卖多次：115(80买进，130卖出；60买进，125卖出)？
+
+func Test_Buy_sale(t *testing.T) {
+	price := []int{100, 80, 120, 130, 70, 60, 100, 125}
+	var buyDay = -1
+	var saleDay = -1
+
+	var buyPrice = 1000
+	var salePrice = -1000
+
+	type Op struct {
+		BuyDay, SaleDay     int
+		BuyPrice, SalePrice int
+		Ear                 int
+	}
+
+	var opList = []Op{}
+	for k, todayPrice := range price {
+		//find buy price
+		if buyDay == -1 {
+			if todayPrice < buyPrice {
+				buyPrice = todayPrice
+				continue
+			}
+			buyDay = k - 1
+			continue
+		}
+
+		//find sale price
+		if todayPrice > salePrice {
+			salePrice = todayPrice
+			if k < len(price)-1 {
+				continue
+			}
+		}
+
+		if k < len(price)-1 {
+			saleDay = k - 1
+		} else {
+			saleDay = k
+		}
+
+		opList = append(opList, Op{
+			BuyDay:    buyDay,
+			BuyPrice:  buyPrice,
+			SaleDay:   saleDay,
+			SalePrice: salePrice,
+			Ear:       salePrice - buyPrice,
+		})
+
+		buyDay = -1
+		saleDay = -1
+
+		buyPrice = 1000
+		salePrice = -1000
+
+	}
+
+	for _, v := range opList {
+		fmt.Printf("==%+v\n", v)
+	}
+}
+
+//1. 写出下面代码输出内容。
+func Test_defer_call(t *testing.T) {
+	defer_call()
+}
