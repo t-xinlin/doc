@@ -1,0 +1,10 @@
+---
+confname: cse-conf
+setting:
+  age: 30
+  name: test
+friendship:
+ - go
+ - java
+ - python
+ - javascript
