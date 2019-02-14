@@ -1,4 +1,14 @@
 ///////////////////////////黑魔法？
+package main
+
+import (
+	"context"
+	"fmt"
+	"reflect"
+	"unsafe"
+)
+
+
 type MyStruct struct {
 	A int
 	B int
@@ -73,20 +83,37 @@ func Do(ctx context.Context, opts ...PluginOpOption) {
 var Key PluginOpOption = func(op *Option) { op.Key = "key1111" }
 var Value PluginOpOption = func(op *Option) { op.Value = "value222" }
 
+//自重写程序
+var q = `/* Go quine */
+package main
+
+import "fmt"
+
 func main() {
-	Do(nil, Value, Key)
-
-	interval, _ := time.ParseDuration("5s")
-	fmt.Printf("interval %d", interval)
-	return
-
-	var s MuxType = "hello world"
-	fmt.Printf("s==%p==\n", &s)
-	s1 := s.String()
-	fmt.Printf("s1==%p==\n", &s1)
-	fmt.Printf("s1 string==%s==\n", s1)
-
-	fmt.Printf("==%s==\n", byteString([]byte("hello world!")))
-	return
+    fmt.Printf("%s%c%s%c\n", q, 0x60, q, 0x60)
 }
 
+var q = `
+
+func main(){
+	/* Go quine */
+
+	fmt.Printf("%s%c%s%c\n", q, 0x60, q, 0x60)
+
+	//Do(nil, Value, Key)
+	//
+	//interval, _ := time.ParseDuration("5s")
+	//fmt.Printf("interval %d", interval)
+	//return
+	//
+	//var s MuxType = "hello world"
+	//fmt.Printf("s==%p==\n", &s)
+	//s1 := s.String()
+	//fmt.Printf("s1==%p==\n", &s1)
+	//fmt.Printf("s1 string==%s==\n", s1)
+	//
+	//fmt.Printf("==%s==\n", byteString([]byte("hello world!")))
+	//return
+}
+//自重写程序
+func main1(){print(c+"\x60"+c+"\x60")};var c=`package main;func main(){print(c+"\x60"+c+"\x60")};var c=`
