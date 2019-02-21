@@ -1,25 +1,22 @@
+package main
+
 import (
-	"fmt"
 	"bytes"
-	"encoding/binary"
-	"time"
-	"log"
-	"reflect"
-	"strings"
-	"testing"
-	"os"
-	"context"
-	"math/rand"
 	"container/list"
+	"context"
+	"encoding/binary"
 	"encoding/json"
+	"fmt"
+	"log"
+	"math/rand"
 	"net/url"
+	"os"
+	"reflect"
 	"runtime"
+	"strings"
 	"sync"
-	"errors"
-	"net/http"
-	"go/parser"
-	"go/token"
-	"go/ast"
+	"testing"
+	"time"
 )
 
 type ICMP struct {

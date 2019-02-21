@@ -1,13 +1,13 @@
 package main
 
 import (
-	"net"
-	"fmt"
 	"bytes"
-	"net/url"
-	"strings"
+	"fmt"
 	"io"
 	"log"
+	"net"
+	"net/url"
+	"strings"
 )
 
 func main() {

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"log"
+	"context"
+	"errors"
 	"github.com/coreos/etcd/clientv3"
 	"github.com/coreos/etcd/clientv3/concurrency"
-	"context"
-	"time"
-	"errors"
-	"sync"
+	"log"
 	"math/rand"
+	"sync"
+	"time"
 )
 
 var globalMux sync.Mutex
@@ -35,7 +35,7 @@ func (mylocak *MyLock) lock(ctx context.Context) (err error) {
 	if endpoints == nil || len(endpoints) == 0 {
 		log.Printf("Endpoints is empty.")
 		return errors.New("Endpoints is empty.")
-	}                              //如果采用分布式锁
+	} //如果采用分布式锁
 	mylocak.Cli, err = clientv3.New(clientv3.Config{Endpoints: endpoints})
 	if err != nil {
 		log.Printf("ETCD NewEtcd cli failed , error is %v ", err)
@@ -87,7 +87,7 @@ func (mylocak *MyLock) unLock() (err error) {
 }
 
 func test_lock() {
-	ctx, _ := context.WithTimeout(context.Background(), time.Second * 2)
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*2)
 	lock, err := Lock(ctx, "/my-lock-mbcp-bc-als/", []string{"http://100.101.197.168:3379"})
 	if err != nil {
 		log.Printf("Get the lock error: %s", err)

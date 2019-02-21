@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/etcd/client"
 	"context"
+	"github.com/coreos/etcd/client"
 )
 
 const (

@@ -2,24 +2,22 @@ package workpool
 
 import "net/http"
 import (
-	_ "net/http/pprof"
-	"github.com/sirupsen/logrus"
-	"os"
-	"time"
-	"path"
 	"github.com/lestrrat/go-file-rotatelogs"
-	"github.com/rifflock/lfshook"
 	"github.com/pkg/errors"
+	"github.com/rifflock/lfshook"
+	"github.com/sirupsen/logrus"
 	"log"
+	_ "net/http/pprof"
+	"os"
+	"path"
+	"time"
 )
 
 const MaxWorkers = 10
 
-
-func init()  {
+func init() {
 	log.Printf("workpool init...")
 }
-
 
 func init_work() {
 	JobQueue = make(chan Job, 5)

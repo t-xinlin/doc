@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 	"time"
-	"net/http"
 )
 
 var logg *log.Logger
@@ -108,9 +108,7 @@ func timeoutHandler1() {
 
 func httpDo(ctx context.Context, req *http.Request, f func(*http.Response, error) error) error {
 	// Run the HTTP request in a goroutine and pass the response to f.
-	tr := &http.Transport{
-		
-	}
+	tr := &http.Transport{}
 	client := &http.Client{Transport: tr}
 	c := make(chan error, 1)
 	go func() { c <- f(client.Do(req)) }()

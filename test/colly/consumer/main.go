@@ -42,20 +42,28 @@ func init() {
 
 	var err error
 	nc, err = nats.Connect(natsURL)
-	if err != nil {os.Exit(1)}
+	if err != nil {
+		os.Exit(1)
+	}
 }
 
 func startConsumer() {
 	nc, err := nats.Connect(nats.DefaultURL)
-	if err != nil {return}
+	if err != nil {
+		return
+	}
 
 	sub, err := nc.QueueSubscribeSync("tasks", "workers")
-	if err != nil {return}
+	if err != nil {
+		return
+	}
 
 	var msg *nats.Msg
 	for {
 		msg, err = sub.NextMsg(time.Hour * 10000)
-		if err != nil {break}
+		if err != nil {
+			break
+		}
 
 		fmt.Printf("\nmsg: %s", string(msg.Data))
 

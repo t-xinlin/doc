@@ -1,11 +1,11 @@
 package reverseproxy_test
 
 import (
-	"testing"
-	"net/http/httptest"
-	"net/url"
 	"net/http"
+	"net/http/httptest"
 	"net/http/httputil"
+	"net/url"
+	"testing"
 )
 
 func TestRP(t *testing.T) {

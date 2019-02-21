@@ -11,7 +11,6 @@ import (
 	"github.com/nats-io/go-nats"
 )
 
-
 var domain2Collector = map[string]*colly.Collector{}
 var nc *nats.Conn
 var maxDepth = 10
@@ -50,7 +49,7 @@ func initABCDECollector() *colly.Collector {
 		// 正则 match 落地页的话，就发消息队列
 		if detailRegex.Match([]byte(link)) {
 			err := nc.Publish("tasks", []byte(link))
-			if nil != err{
+			if nil != err {
 				fmt.Printf("Pub Error: %s", err.Error())
 			}
 			nc.Flush()
@@ -92,9 +91,9 @@ func main() {
 	}
 
 	ticker := time.NewTicker(time.Second)
-	for range ticker.C{
+	for range ticker.C {
 		err := nc.Publish("tasks", []byte("Hello world!"))
-		if nil != err{
+		if nil != err {
 			fmt.Printf("Pub Error: %s", err.Error())
 		}
 		nc.Flush()

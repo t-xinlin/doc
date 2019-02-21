@@ -8,7 +8,6 @@ import (
 	"unsafe"
 )
 
-
 type MyStruct struct {
 	A int
 	B int
@@ -95,7 +94,7 @@ func main() {
 
 var q = `
 
-func main(){
+func main() {
 	/* Go quine */
 
 	fmt.Printf("%s%c%s%c\n", q, 0x60, q, 0x60)
@@ -115,5 +114,16 @@ func main(){
 	//fmt.Printf("==%s==\n", byteString([]byte("hello world!")))
 	//return
 }
+
 //自重写程序
-func main1(){print(c+"\x60"+c+"\x60")};var c=`package main;func main(){print(c+"\x60"+c+"\x60")};var c=`
+func main1() { print(c + "\x60" + c + "\x60") }
+
+var c = `package main;func main(){print(c+"\x60"+c+"\x60")};var c=`
+
+
+//aa6ro2g@icloud.com
+//ATt778877
+//
+//jb2h4r7
+//
+//ir6z9sl

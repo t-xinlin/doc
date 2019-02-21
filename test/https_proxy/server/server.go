@@ -3,12 +3,12 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net"
 	"net/http"
 	"time"
-	"fmt"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 		// Disable HTTP/2.
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
 	}
-	fmt.Printf("http listen on : %+v \n",  ":8888")
+	fmt.Printf("http listen on : %+v \n", ":8888")
 	if proto == "http" {
 		log.Fatal(server.ListenAndServe())
 	} else {

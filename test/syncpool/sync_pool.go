@@ -6,7 +6,7 @@ var DEFAULT_SYNC_POOL *SyncPool
 
 func NewPool() *SyncPool {
 	DEFAULT_SYNC_POOL = NewSyncPool(
-		16,//5
+		16,      //5
 		1024*50, //30000,
 		2,
 	)

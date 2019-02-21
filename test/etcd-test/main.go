@@ -1,23 +1,23 @@
 package main
 
 import (
-	"time"
 	"context"
+	"fmt"
 	"github.com/coreos/etcd/clientv3"
-	"strconv"
-	"math/rand"
 	"github.com/coreos/etcd/mvcc/mvccpb"
 	"log"
+	"math/rand"
 	"net"
-	"fmt"
+	"strconv"
 	"sync"
+	"time"
 )
 
 var (
 	dialTimeout    = 5 * time.Second
 	requestTimeout = 10 * time.Second
 	//endpoints      = []string{"100.101.197.15:3379",}
-	endpoints = []string{"127.0.0.1:3379",}
+	endpoints = []string{"127.0.0.1:3379"}
 )
 var cli1 *clientv3.Client
 var cli2 *clientv3.Client
@@ -191,9 +191,9 @@ func watch_00() {
 		for _, ev := range wresp.Events {
 			switch ev.Type {
 			case mvccpb.DELETE:
-				log.Printf("WATCH === 删除%s %q : %q,  , Version: %+v, CreateRevision: %+v, ModRevision: %+v, \n", ev.Type, ev.Kv.Key, ev.Kv.Value, ev.Kv.Version, ev.Kv.CreateRevision, ev.Kv.ModRevision, )
+				log.Printf("WATCH === 删除%s %q : %q,  , Version: %+v, CreateRevision: %+v, ModRevision: %+v, \n", ev.Type, ev.Kv.Key, ev.Kv.Value, ev.Kv.Version, ev.Kv.CreateRevision, ev.Kv.ModRevision)
 			case mvccpb.PUT:
-				log.Printf("WATCH === 存放%s %q : %q,  , Version: %+v, CreateRevision: %+v, ModRevision: %+v, \n", ev.Type, ev.Kv.Key, ev.Kv.Value, ev.Kv.Version, ev.Kv.CreateRevision, ev.Kv.ModRevision, )
+				log.Printf("WATCH === 存放%s %q : %q,  , Version: %+v, CreateRevision: %+v, ModRevision: %+v, \n", ev.Type, ev.Kv.Key, ev.Kv.Value, ev.Kv.Version, ev.Kv.CreateRevision, ev.Kv.ModRevision)
 			}
 		}
 	}

@@ -1,6 +1,5 @@
 package crypto
 
-
 import (
 	"bytes"
 	"crypto/aes"
@@ -91,7 +90,7 @@ func EncodeAES256HexUpper(data string, key []byte) string {
 // boss返回结果解密
 func DecodeAES256HexUpper(data string, key []byte) string {
 	newData := strings.ToLower(data)
-	dataByte,_ := hex.DecodeString(newData)
+	dataByte, _ := hex.DecodeString(newData)
 	newByte, _ := AesECBDecrypt(dataByte, key)
 	return string(newByte)
 }
@@ -216,7 +215,6 @@ func PKCS7Padding(cipherText []byte, blockSize int) []byte {
 	padText := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(cipherText, padText...)
 }
-
 
 // PKCS7解填充/和PKCS5填充一样,只是填充字段多少的区别
 func PKCS7UnPadding(encrypt []byte) []byte {

@@ -1,4 +1,5 @@
 package crypto
+
 import "crypto/cipher"
 
 // ecb加密方法

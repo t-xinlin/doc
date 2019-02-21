@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"net"
-	"log"
-	"google.golang.org/grpc"
 	"github.com/t-xinlin/test/proto/pb"
+	"google.golang.org/grpc"
+	"log"
+	"net"
 )
 
 const port = ":50051"
@@ -13,7 +13,7 @@ const port = ":50051"
 type server struct{}
 
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Printf("Send: %+v", "Hello" + in.Name)
+	log.Printf("Send: %+v", "Hello"+in.Name)
 	return &pb.HelloReply{Message: "Hello" + in.Name}, nil
 }
 

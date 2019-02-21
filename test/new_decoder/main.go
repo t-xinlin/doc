@@ -92,4 +92,3 @@ func (w openWeatherMap) temperature(city string) (float64, error) {
 	log.Printf("openWeatherMap: %s: %.2f", city, d.Main.Kelvin)
 	return d.Main.Kelvin, nil
 }
-

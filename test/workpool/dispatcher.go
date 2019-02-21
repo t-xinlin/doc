@@ -4,7 +4,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const maxWorkers  = 10
+const maxWorkers = 10
+
 type Dispatcher struct {
 	// A pool of workers channels that are registered with the dispatcher
 	WorkerPool chan chan Job
@@ -13,7 +14,7 @@ type Dispatcher struct {
 
 func NewDispatcher(maxWorkers int) *Dispatcher {
 	pool := make(chan chan Job, maxWorkers)
-	return &Dispatcher{WorkerPool: pool, MaxWorkers:MaxWorkers}
+	return &Dispatcher{WorkerPool: pool, MaxWorkers: MaxWorkers}
 }
 
 func (d *Dispatcher) Run() {

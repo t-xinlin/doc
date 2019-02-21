@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/url"
+	"log"
 	"net/http"
 	"net/http/httputil"
-	"log"
+	"net/url"
 )
 
 type handle struct {

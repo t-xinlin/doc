@@ -1,14 +1,14 @@
 package workpool
 
 import (
-	"os"
 	"net/http"
+	"os"
 	"time"
 	//"log"
+	"encoding/json"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"fmt"
-	"encoding/json"
 )
 
 var (

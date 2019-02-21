@@ -29,24 +29,22 @@ func main() {
 	//r.Use(ratelimit)
 	//r.Add("/", http.HandlerFunc(hello))
 	http.Handle("/", timeMiddleware(http.HandlerFunc(hello)))
-	for k,v := range r.mux{
+	for k, v := range r.mux {
 		http.Handle(k, v)
 	}
-	if err := http.ListenAndServe(":8080", nil); err != nil{
+	if err := http.ListenAndServe(":8080", nil); err != nil {
 
 	}
 }
-
-
 
 type middleware func(http.Handler) http.Handler
 
 type Router struct {
-	middlewareChain [] middleware
-	mux map[string] http.Handler
+	middlewareChain []middleware
+	mux             map[string]http.Handler
 }
 
-func NewRouter() *Router{
+func NewRouter() *Router {
 	return &Router{}
 }
 

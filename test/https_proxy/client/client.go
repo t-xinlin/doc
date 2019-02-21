@@ -1,11 +1,11 @@
 package main
 
 import (
-	"net/url"
-	"net/http"
 	"crypto/tls"
-	"net/http/httputil"
 	"fmt"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
 )
 
 func main() {

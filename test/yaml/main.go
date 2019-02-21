@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	beegoyaml "github.com/astaxie/beego/config/yaml"
-	"io/ioutil"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 )
 
 type Myconf struct {

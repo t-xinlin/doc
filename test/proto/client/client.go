@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
+	"github.com/t-xinlin/test/proto/pb"
 	"google.golang.org/grpc"
 	"log"
 	"os"
-	"context"
-	"github.com/t-xinlin/test/proto/pb"
 )
 
 const address = "localhost:50051"
