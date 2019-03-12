@@ -1,3 +1,17 @@
+package main
+
+import (
+	"errors"
+	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"log"
+	"net/http"
+	"reflect"
+	"strings"
+	"testing"
+)
 
 //解析
 //考点:结构体比较
@@ -288,11 +302,11 @@ func Test_filed2222_00888822222(t *testing.T) {
 
 func test222(x int) (func(), func()) {
 	return func() {
-		println(x)
-		x += 10
-	}, func() {
-		println(x)
-	}
+			println(x)
+			x += 10
+		}, func() {
+			println(x)
+		}
 }
 
 func Test_filed222222_00888822222(t *testing.T) {
@@ -425,5 +439,3 @@ func Test_iota11111(t *testing.T) {
 	log.Printf("iota InterfacePrio=%d, BoundPrio=%d, UpnpPrio=%d, HTTPPrio=%d, ManualPrio=%d", InterfacePrio, BoundPrio, UpnpPrio, HTTPPrio, ManualPrio)
 	log.Printf("iota KB=%+v, MB=%+v, GB=%+v, TB=%+v, PB=%+v,  EB=%+v,  ZB=%+v,  YB=%+v", KB, MB, GB, TB, PB, EB, ZB, YB)
 }
-
-

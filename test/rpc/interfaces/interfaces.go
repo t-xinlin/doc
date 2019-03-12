@@ -35,7 +35,7 @@ func DialHelloServiceJSON(network, add string) (*HelloServiceClient, error) {
 	if nil != err {
 		return nil, err
 	}
-	client :=rpc.NewClientWithCodec(jsonrpc.NewClientCodec(c))
+	client := rpc.NewClientWithCodec(jsonrpc.NewClientCodec(c))
 	return &HelloServiceClient{client}, nil
 }
 

@@ -1,3 +1,10 @@
+package workpool
+
+import (
+	"fmt"
+	"runtime"
+)
+
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	fmt.Printf("------------------------start------------------------\n")

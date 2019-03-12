@@ -320,11 +320,11 @@ func worker(i int, ch chan Work, quit chan struct{}) {
 		select {
 		case w := <-ch:
 			if quit == nil {
-				w.Refuse();
+				w.Refuse()
 				fmt.Println("worker", i, "refused", w)
 				break
 			}
-			w.Do();
+			w.Do()
 			fmt.Println("worker", i, "processed", w)
 		case <-quit:
 			fmt.Println("worker", i, "quitting")
@@ -347,7 +347,7 @@ func Benchmark_ticker(testB *testing.B) {
 		}
 	}()
 
-	for ; ; {
+	for {
 		i := 0
 		i++
 	}
@@ -652,7 +652,7 @@ func Benchmark_reflect(testB *testing.B) {
 }
 
 const (
-	b  = 1 << (10 * iota)
+	b = 1 << (10 * iota)
 	kb
 	mb
 	gb
@@ -877,7 +877,7 @@ func Benchmark_channel1(testB *testing.B) {
 	//defer close(cacheChan)
 	//wg.Wait()
 
-	for ; ; {
+	for {
 		i := 0
 		i++
 	}
@@ -1010,7 +1010,6 @@ func jobWithTimeoutHandler1() {
 				t := time.Duration(rand.Intn(5))
 				log.Printf("---ping %+v", t)
 				time.Sleep(time.Duration(t * time.Second))
-
 
 			}
 		}
@@ -1179,7 +1178,7 @@ func Benchmark_append(testB *testing.B) {
 func Test_fallthrough(t *testing.T) {
 	isSpace := func(char byte) bool {
 		switch char {
-		case ' ':       // 空格符会直接 break，返回 false // 和其他语言不一样
+		case ' ': // 空格符会直接 break，返回 false // 和其他语言不一样
 			fallthrough // 返回 true
 			//case '\n':
 
@@ -1292,7 +1291,6 @@ func Test_channel_2(t *testing.T) {
 		fmt.Printf("%d\n", <-ch)
 	}
 }
-
 
 func Test_channel_3(t *testing.T) {
 	ch := make(chan int, 3)

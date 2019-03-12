@@ -26,9 +26,9 @@ func main() {
 		}
 		log.Printf("Reply: %s", reply)
 
-		var d string =	`{"method":"com.xl.interface.SayHello","params":["hello"],"id":0}`
-		resp, err :=http.Post("http://127.0.0.1:6666/jsonrpc","application/json", strings.NewReader(d))
-		if err != nil{
+		var d string = `{"method":"com.xl.interface.SayHello","params":["hello"],"id":0}`
+		resp, err := http.Post("http://127.0.0.1:6666/jsonrpc", "application/json", strings.NewReader(d))
+		if err != nil {
 			log.Printf("Error: %s", err.Error())
 		} else {
 			bytes, _ := ioutil.ReadAll(resp.Body)

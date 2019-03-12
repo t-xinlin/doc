@@ -120,7 +120,6 @@ func main1() { print(c + "\x60" + c + "\x60") }
 
 var c = `package main;func main(){print(c+"\x60"+c+"\x60")};var c=`
 
-
 //aa6ro2g@icloud.com
 //ATt778877
 //

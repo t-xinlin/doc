@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/t-xinlin/doc/test/workpoolv2/concurrence"
 	"runtime"
 	"time"
-	"github.com/t-xinlin/doc/test/workpoolv2/concurrence"
 )
 
 //定义一个实现Job接口的数据
 type Score struct {
 	Num int
 }
+
 //定义对数据的处理
 func (s *Score) Do() {
 	fmt.Println("num:", s.Num)

@@ -53,11 +53,10 @@ func worker(wg *sync.WaitGroup) {
 	}
 }
 
-
 // 生产者: 生成 factor 整数倍的序列
 func Producer(factor int, out chan<- int) {
 	for i := 0; ; i++ {
-		out <- i*factor
+		out <- i * factor
 	}
 }
 
@@ -80,9 +79,6 @@ func main1() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	fmt.Printf("quit (%v)\n", <-c)
 
-
-
-
 	var wg sync.WaitGroup
 	wg.Add(2)
 
@@ -90,7 +86,6 @@ func main1() {
 	go worker(&wg)
 	wg.Wait()
 	fmt.Println(total)
-
 
 	//var config atomic.Value // 保存当前配置信息
 	//
@@ -131,19 +126,17 @@ func main() {
 	p.Publish("hello, golang!")
 
 	go func() {
-		for  msg := range all {
+		for msg := range all {
 			fmt.Println("all:", msg)
 		}
-	} ()
+	}()
 
 	go func() {
-		for  msg := range golang {
+		for msg := range golang {
 			fmt.Println("golang:", msg)
 		}
-	} ()
+	}()
 
 	// 运行一定时间后退出
 	time.Sleep(3 * time.Second)
 }
-
-

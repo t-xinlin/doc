@@ -2,7 +2,6 @@ package concurrence
 
 import "fmt"
 
-
 // --------------------------- Job ---------------------
 type Job interface {
 	Do()
