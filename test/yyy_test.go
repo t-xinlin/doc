@@ -199,7 +199,7 @@ func (t T1) m1() {
 }
 
 type T2 = T1
-type MyStruct struct {
+type MyStruct11 struct {
 	T1
 	T2
 }

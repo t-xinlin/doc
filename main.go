@@ -19,6 +19,10 @@ import (
 	"time"
 )
 
+func main(){
+	fmt.Println("run")
+}
+
 type ICMP struct {
 	Type        uint8
 	Code        uint8
