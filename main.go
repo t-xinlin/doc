@@ -998,7 +998,7 @@ func jobWithTimeoutHandler1() {
 
 		arr := make([]int, 5)
 
-		for i, _ := range arr {
+		for i := range arr {
 			log.Printf("---%+v", i)
 			select {
 			//case <-time.After(time.Second * 5):
@@ -1040,7 +1040,7 @@ func delte_array(arr []string, i int) (result []string) {
 	endIndex := len(arr) - 1
 	result = make([]string, 0)
 
-	for k, _ := range arr {
+	for k := range arr {
 		if k == i {
 			result = append(result, arr[index:k]...)
 			index = k + 1
