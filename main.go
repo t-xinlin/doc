@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-func main(){
+func main() {
 	fmt.Println("run")
 }
 
@@ -1051,6 +1051,7 @@ func delte_array(arr []string, i int) (result []string) {
 
 	return result
 }
+
 func Benchmark_array(testB *testing.B) {
 	var s = []string{"ca", "ab", "ec", "ca", "ab", "ec", "ca", "ab", "ab"}
 	log.Printf("befor %+v", s)
