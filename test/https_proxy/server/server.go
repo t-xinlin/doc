@@ -11,8 +11,8 @@ import (
 	"time"
 )
 
-const HTTP  = "http"
-const HTTPS  = "https"
+const HTTP = "http"
+const HTTPS = "https"
 
 func main() {
 	var pemPath string
