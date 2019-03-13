@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+const HTTP  = "http"
+const HTTPS  = "https"
+
 func main() {
 	var pemPath string
 	flag.StringVar(&pemPath, "pem", "/home/lwl/server.pem", "path to pem file")
@@ -19,7 +22,7 @@ func main() {
 	var proto string
 	flag.StringVar(&proto, "proto", "https", "Proxy protocol (http or https)")
 	flag.Parse()
-	if proto != "http" && proto != "https" {
+	if proto != HTTP && proto != HTTPS {
 		log.Fatal("Protocol must be either http or https")
 	}
 	server := &http.Server{
@@ -35,7 +38,7 @@ func main() {
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
 	}
 	fmt.Printf("http listen on : %+v \n", ":8888")
-	if proto == "http" {
+	if proto == HTTP {
 		log.Fatal(server.ListenAndServe())
 	} else {
 		log.Fatal(server.ListenAndServeTLS(pemPath, keyPath))

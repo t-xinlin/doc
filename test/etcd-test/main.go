@@ -270,7 +270,7 @@ func main() {
 				fmt.Println("init", k, v)
 			}
 
-			p.Mp["key02"].Name = "louuu"
+			p.Mp["key02"].Name = fmt.Sprintf("louuu")
 			for k, v := range p.Mp {
 				fmt.Println("update", k, v)
 			}
