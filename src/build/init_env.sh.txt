@@ -1,0 +1,125 @@
+#!/bin/bash
+export BASE_ROOT=$(cd `dirname $0`; pwd)
+export net_name=$(ip -o -4 route show to default | awk '{print $5}')
+export listen_addr=$(ifconfig $net_name | grep -E 'inet\W' | grep -o -E [0-9]+.[0-9]+.[0-9]+.[0-9]+ | head -n 1)
+export ADDR=$listen_addr
+. ./env.sh
+if  [ -z "$SC_URI" ]; then
+    export SC_URI="http://$ADDR:30100"
+	echo "Use Local servicecenter: $SC_URI"
+fi
+
+replace_AKSK() {
+  local CONF_PATH=$1
+  if  [ ! -z "$AK_ENV" ]; then
+  cat << EOF > $CONF_PATH/auth.yaml
+## Huawei Public Cloud ak/sk
+cse.credentials.accessKey: $AK_ENV
+cse.credentials.secretKey: $SK_ENV
+cse.credentials.project: $PRO_ENV
+## Cipher plugin name, used to decrypt ak/sk when they are encrypted
+#cse.credentials.akskCustomCipher:
+EOF
+  fi
+}
+
+replace_CHASSIS() {
+  local CONF_PATH=$1
+  local HTTP_ADD=$2
+  local DUBBO_ADD=$3
+  local DUBBO_SR_ADD=$4
+  
+  cat << EOF > $CONF_PATH/chassis.yaml
+---
+cse:
+  protocols:
+    http:
+      listenAddress: $HTTP_ADD
+      ## how to let other service discover this service, it is internalIP:serverPort
+      #advertiseAddress: 127.0.0.1:30101
+    #dubbo:
+      #listenAddress: $DUBBO_ADD
+    #dubboSimpleRegistry:
+      #listenAddress: $DUBBO_SR_ADD
+  service:
+    registry:
+      address: ${SC_URI}  #uri of service center
+     # address: https://cse.cn-north-1.myhwclouds.com:443 # uri of service center
+      scope: full #set full to be able to discover other app's service
+      watch: false # set if you want to watch instance change event
+      autoIPIndex: true # set to true if u want to resolve source IP to microservice
+  config:
+    client:
+      serverUri: ${CC_URI}  #uri of config center
+      refreshMode: 1 # 1: only pull config.
+      refreshInterval: 10 # unit is second
+      tenantName: default
+ 
+  handler:
+    chain:
+      Consumer:
+        outgoing:  #consumer handlers
+        #If registry type is pilot then to make sure traffic goes through mesher provider new handler needs to be added to consumer after loadbalance handler
+        #ex: router, ratelimiter-consumer, bizkeeper-consumer, loadbalance, port-selector, transport
+      Provider:
+        incoming: ratelimiter-provider,bizkeeper-provider,transport #provider handlers
+ 
+#ssl:
+## Set those config to make mesher as https service
+#  mesher.Provider.cipherPlugin: default
+#  mesher.provider.verifyPeer: false
+#  mesher.provider.cipherSuits: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+#  mesher.provider.protocol: TLSv1.2
+#  mesher.provider.caFile:
+#  mesher.provider.certFile:
+#  mesher.provider.keyFile:
+#  mesher.provider.certPwdFile:
+
+EOF
+
+} 
+
+replace_MONITOR() {
+  local CONF_PATH=$1
+
+  cat << EOF > $CONF_PATH/monitoring.yaml
+cse:
+  monitor: #Send monitoring data to CSE monitor Server
+    client:
+       serverUri: ${MC_URI}
+#      serverUri: https://cse.cn-north-1.myhwclouds.com:443   # monitor server url
+#      enable: true                           #set it to true if you want to send the data to monitor server
+#      userName: default                     # Authentication headers
+#      domainName: default                   # Authentication headers
+#
+#tracing:
+#  enabled: true #enable distribution tracing
+#  collectorType: zipkin       #zipkin: Send tracing info to zipkin server
+#                              #namedPipe: Write tracing info to linux named pipe.
+#  collectorTarget: http://localhost:9411/api/v1/spans #If the collectorType is "zipkin", the target is a zipkin server url, if the collecterType is "file" or "namedPipe", the target is a file path.
+
+EOF
+
+}
+
+SC_URI_RA=`echo ${SC_URI//\//\\\\/}`
+CC_URI_RA=`echo ${CC_URI//\//\\\\/}`
+MC_URI_RA=`echo ${MC_URI_RA//\//\\\\/}`
+
+
+#init serviceB
+export SERVICE_P_ROOT=$BASE_ROOT/provider
+if [ -f "$SERVICE_P_ROOT/mesher/conf/chassis.yaml" ];then
+    replace_AKSK $SERVICE_P_ROOT/mesher/conf
+    replace_CHASSIS $SERVICE_P_ROOT/mesher/conf $ADDR:30101 $ADDR:30201 $ADDR:30202
+    replace_MONITOR $SERVICE_P_ROOT/mesher/conf
+fi
+
+#init serviceA
+export SERVICE_C_ROOT=$BASE_ROOT/consumer
+if [ -f "$SERVICE_C_ROOT/mesher/conf/chassis.yaml" ];then
+   replace_AKSK $SERVICE_C_ROOT/mesher/conf
+   replace_CHASSIS $SERVICE_C_ROOT/mesher/conf  $ADDR:40101 $ADDR:40201 $ADDR:40202
+   replace_MONITOR $SERVICE_C_ROOT/mesher/conf
+fi
+

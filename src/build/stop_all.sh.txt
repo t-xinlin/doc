@@ -1,0 +1,47 @@
+#!/bin/bash
+. ./env.sh
+if  [ -z "$JAVA_HOME" ]; then
+    echo "JAVA_HOME is empty."
+    exit 1
+fi
+
+export BASE_ROOT=$(cd `dirname $0`; pwd)
+export net_name=$(ip -o -4 route show to default | awk '{print $5}')
+export listen_addr=$(ifconfig $net_name | grep -E 'inet\W' | grep -o -E [0-9]+.[0-9]+.[0-9]+.[0-9]+ | head -n 1)
+
+#!/bin/bash
+cd `dirname $0`
+BIN_DIR=`pwd`
+cd ..
+DEPLOY_DIR=`pwd`
+CONF_DIR=$DEPLOY_DIR
+
+PIDS=`ps -ef | grep -v grep | grep "$CONF_DIR" |awk '{print $2}'`
+if [ -z "$PIDS" ]; then
+    echo "ERROR: The $SERVER_NAME does not started!"
+    exit 1
+fi
+
+echo -e "Stopping the $SERVER_NAME ...\c"
+for PID in $PIDS ; do
+    kill $PID > /dev/null 2>&1
+done
+
+COUNT=0
+while [ $COUNT -lt 1 ]; do    
+    echo -e ".\c"
+    sleep 1
+    COUNT=1
+    for PID in $PIDS ; do
+        PID_EXIST=`ps -f -p $PID | grep $CONF_DIR`
+        if [ -n "$PID_EXIST" ]; then
+            COUNT=0
+            break
+        fi
+    done
+done
+
+echo "OK!"
+echo "PID: $PIDS"
+
+

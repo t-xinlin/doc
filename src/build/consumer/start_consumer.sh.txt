@@ -1,0 +1,70 @@
+#!/bin/bash
+cd `dirname $0`
+BIN_DIR=`pwd`
+DEPLOY_DIR=`pwd`
+CONF_DIR=$DEPLOY_DIR/conf
+SERVER_NAME=consumer
+SERVER_HOST=127.0.0.1
+SERVER_PROTOCOL=http111
+#SERVER_PORT=""
+LOGS_FILE=log/out.log
+
+if [ -z "$SERVER_HOST" ]; then
+    SERVER_HOST='127.0.0.1'
+fi
+
+if [ -z "$SERVER_NAME" ]; then
+    SERVER_NAME=`hostname`
+fi
+
+PIDS=`ps -ef | grep $SERVER_NAME | grep -v grep | grep "$CONF_DIR" |awk '{print $2}'`
+if [ -n "$PIDS" ]; then
+    echo "ERROR: The $SERVER_NAME already started!"
+    echo "PID: $PIDS"
+    exit 1
+fi
+
+if [ -n "$SERVER_PORT" ]; then
+    SERVER_PORT_COUNT=`netstat -tln | grep $SERVER_PORT | wc -l`
+    if [ $SERVER_PORT_COUNT -gt 0 ]; then
+        echo "ERROR: The $SERVER_NAME port $SERVER_PORT already used!"
+        exit 1
+    fi
+fi
+
+LOGS_DIR=""
+if [ -n "$LOGS_FILE" ]; then
+    LOGS_DIR=`dirname $LOGS_FILE`
+else
+    LOGS_DIR=$DEPLOY_DIR/logs
+fi
+if [ ! -d $LOGS_DIR ]; then
+    mkdir $LOGS_DIR
+fi
+
+
+echo -e "Starting the $SERVER_NAME ...\c"
+$DEPLOY_DIR/consumer -host=http://provider/v1/test -proxy=http://127.0.0.1:40101 > $DEPLOY_DIR/$LOGS_FILE 2>&1 &
+
+COUNT=0
+while [ $COUNT -lt 1 ]; do    
+    echo -e ".\c"
+    sleep 1 
+    if [ -n "$SERVER_PORT" ]; then
+        if [ "$SERVER_PROTOCOL" == "http" ]; then
+    	    COUNT=`echo status | nc -i 1 $SERVER_HOST $SERVER_PORT | grep -c OK`
+        else
+            COUNT=`netstat -an | grep $SERVER_PORT | wc -l`
+        fi
+    else
+    	COUNT=`ps -f | grep $SERVER_NAME | grep -v grep | grep "$DEPLOY_DIR" | awk '{print $2}' | wc -l`
+    fi
+    if [ $COUNT -gt 0 ]; then
+        break
+    fi
+done
+
+echo "OK!"
+PIDS=`ps -f | grep $SERVER_NAME | grep -v grep | grep "$DEPLOY_DIR" | awk '{print $2}'`
+echo "PID: $PIDS"
+

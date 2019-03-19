@@ -1,0 +1,8 @@
+SET CUR_PATH=%~dp0
+set CUR_PATH=dubbo-demos
+wmic process where (name!="wmic.exe" and CommandLine LIKE "%%%CUR_PATH%%%") call terminate
+
+
+
+
+
