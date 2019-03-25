@@ -40,7 +40,7 @@ func Foo(x interface{}) {
 	}
 	fmt.Println("non-empty interface")
 }
-func Test_interface_008888(t *testing.T) {
+func Test_interface_struct_equal(t *testing.T) {
 	var x *int = nil
 	Foo(x)
 }
@@ -55,16 +55,7 @@ func Test_interface_008888(t *testing.T) {
 //	}
 //	return nil, false
 //}
-func Test_return_008888(t *testing.T) {
-	//intmap:=map[int]string{
-	//	1:"a",
-	//	2:"bb",
-	//	3:"ccc",
-	//}
-	//
-	//v,err:=GetValue1(intmap,3)
-	//fmt.Println(v,err)
-}
+
 
 //解析
 //考点：函数返回值类型
@@ -204,7 +195,7 @@ type MyStruct11 struct {
 	T2
 }
 
-func Test_Type_Alias_00888822222(t *testing.T) {
+func Test_Type_Alias(t *testing.T) {
 	//my := MyStruct{}
 	//my.m1()
 }
