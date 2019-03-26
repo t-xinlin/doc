@@ -6,17 +6,17 @@ import (
 	"os"
 )
 
-var rootCmd =&cobra.Command{
-	Use:"hugo",
-	Short:"Hugo",
+var RootCmd =&cobra.Command{
+	Use:"cmd",
+	Short:"Cmd",
 	Long:"It is a good",
 	Run: func(cmd *cobra.Command, args []string) {
-		
+
 	},
 }
 
 func Execute()  {
-	if err := rootCmd.Execute(); err !=nil{
+	if err := RootCmd.Execute(); err !=nil{
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
