@@ -1,5 +1,16 @@
+set -e
 set +x
-docker images | grep "2018">docker.list
+export DOCKER_LIST=docker.list
+read -t 30 -p "input images name:" IMAGE_NAME
+echo $IMAGE_NAME
+if [ "$IMAGE_NAME" = "" ]
+then
+  echo "nothing input, exit it"
+  exit 1
+else
+  echo ">>$IMAGE_NAME"
+fi
+docker images | grep "$IMAGE_NAME">$DOCKER_LIST
 cat docker.list
 while read line
 do
@@ -9,4 +20,6 @@ do
     echo $docker_name
     echo $docker_version
     docker rmi -f ${docker_name}:${docker_version}
-done<$WORKSPACE/docker.list
+done<$DOCKER_LIST
+rm -rf $DOCKER_LIST
+echo "Done>>>>>>>>>>>>>>>>"
