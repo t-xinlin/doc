@@ -1,0 +1,32 @@
+name: Go Test # workflow 的名字
+
+on: [push, pull_request] # 在发生 push 或者是 pull request 事件时执行此 workflow
+jobs:
+  test:
+    strategy:
+      matrix: # 这个我也不知道怎么翻译了，大致实现的功能是把每个变量的每种取值都遍历一遍
+        go_version: [1.12, 1.14] # key: valueSet
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    name: Test with go ${{ matrix.go_version }} on ${{ matrix.os }} # 在 job.<job_id>.strategy.matrix 中定义的变量在整个 job 下都有效
+    runs-on: ${{ matrix.os }} # 使用的 OS
+
+    steps: # 步骤
+      - name: Set up Go ${{ matrix.go_version }} # 每一步的名字
+        uses: actions/setup-go@v1 # 要引用的 actions，这里用 setup-go 来进行 go 环境的安装
+        with: # 指定 actions 的入参
+          go-version: ${{ matrix.go_version }}
+        id: go # 参考 https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsid ，不知道怎么解释 Orz
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+      - name: Get dependencies # 安装项目依赖
+        run: | # 用来执行 shell 语句
+          go get -v -t -d ./...
+          if [ -f Gopkg.toml ]; then
+              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+              dep ensure
+          fi
+      - name: Test # 进行编译测试
+        run: |
+          go build -v -o main .
+          bash -x scripts/unit_test.sh
