@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix: # 这个我也不知道怎么翻译了，大致实现的功能是把每个变量的每种取值都遍历一遍
         go_version: [1.12, 1.14] # key: valueSet
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest]
 
     name: Test with go ${{ matrix.go_version }} on ${{ matrix.os }} # 在 job.<job_id>.strategy.matrix 中定义的变量在整个 job 下都有效
     runs-on: ${{ matrix.os }} # 使用的 OS
