@@ -1,13 +1,15 @@
 name: Go Test # workflow 的名字
 
+# 在发生 push 或者是 pull request 事件时执行此 workflow
+# Trigger the workflow on push or pull request
+#on: [push, pull_request]
 on:
-  # 在发生 push 或者是 pull request 事件时执行此 workflow
-  - push:
-      branches:
-        - master
-  - pull_request:
-      branches:
-        - master
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   lint:
     name: Lint
