@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v1
       - name: Format Checher
         run: |
-          diff -u <(echo -n) <(find . -name "*.go" -not -path "./vendor/*" -not -path ".git/*" | xargs gofmt -s -d)
+          diff -u <(echo -n) <(find . -name "*.go" -not -path "*/vendor/*" -not -path ".git/*" | xargs gofmt -s -d)
           if [ $? == 0 ]; then
           	echo "Hurray....all code is formatted properly..."
           	exit 0
@@ -34,7 +34,7 @@ jobs:
       - name: DeadCode Checker
         run: |
           go get -u github.com/tsenart/deadcode
-          diff -u <(echo -n) <(find . -type d -not -path "./vendor/*" | xargs deadcode)
+          diff -u <(echo -n) <(find . -type d -not -path "*/vendor/*" | xargs deadcode)
           if [ $? == 0 ]; then
           	echo "Hurray....all code's are reachable and utilised..."
           	exit 0
@@ -45,7 +45,7 @@ jobs:
       - name: Misspell Checker
         run: |
           go get -u github.com/client9/misspell
-          diff -u <(echo -n) <(find . -type f -not -path "./vendor/*" -not -path "./third_party/*" -print0 | xargs -0 misspell)
+          diff -u <(echo -n) <(find . -type f -not -path "*/vendor/*" -not -path "*/third_party/*" -print0 | xargs -0 misspell)
           if [ $? == 0 ]; then
           	echo "No Misspell found"
           	exit 0
@@ -67,7 +67,7 @@ jobs:
       - name: GoCyclo Checker
         run: |
           go get github.com/fzipp/gocyclo
-          diff -u <(echo -n) <(find . -name "*.go" -not -path "./vendor/*" -not -path ".git/*" -not -path "./third_party/*" | grep -v _test | xargs gocyclo -over 16)
+          diff -u <(echo -n) <(find . -name "*.go" -not -path "*/vendor/*" -not -path ".git/*" -not -path "*/third_party/*" | grep -v _test | xargs gocyclo -over 16)
           if [ $? == 0 ]; then
           	echo "All function has less cyclomatic complexity..."
           	exit 0

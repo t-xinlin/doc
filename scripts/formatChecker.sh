@@ -1,4 +1,4 @@
-diff -u <(echo -n) <(find . -name "*.go" -not -path "./vendor/*" -not -path ".git/*" | xargs gofmt -s -d)
+diff -u <(echo -n) <(find . -name "*.go" -not -path "*/vendor/*" -not -path ".git/*" | xargs gofmt -s -d)
 if [ $? == 0 ]; then
 	echo "Hurray....all code is formatted properly..."
 	exit 0
