@@ -6,19 +6,19 @@ import (
 )
 
 func main() {
-	user := User{1, 19,"Allen.Wu", "add"}
+	user := User{1, 19, "Allen.Wu", "add"}
 	DofileAndMethod(user)
 
 }
 
 type User struct {
 	Id   int
-	Age int
+	Age  int
 	Name string
 	Add  string
 }
 
-func (u User) ReflecFunc(name string, age int ) {
+func (u User) ReflecFunc(name string, age int) {
 	fmt.Printf("Method Call>>>>>>>>>>>>>>User: %+v Name: %s  Age: %d\n", u, name, age)
 }
 
@@ -30,8 +30,8 @@ func DofileAndMethod(input interface{}) {
 	getValue := reflect.ValueOf(input)
 	fmt.Println("Get  all filed is ", getValue)
 
-	pointer :=reflect.ValueOf(&input)
-	newv :=pointer.Elem()
+	pointer := reflect.ValueOf(&input)
+	newv := pointer.Elem()
 	newv.CanSet()
 	newv.Set(reflect.ValueOf(User{111, 23, "zhangsan", "shenzhen"}))
 	fmt.Println("User input: ", input)

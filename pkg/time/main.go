@@ -8,10 +8,10 @@ import (
 func main() {
 	intChan := make(chan int)
 	ch := UseTicker(intChan)
-	arr:=make([]int,0)
-	i :=0
+	arr := make([]int, 0)
+	i := 0
 	for e := range intChan {
-		if len(arr)>=50{
+		if len(arr) >= 50 {
 			break
 		}
 		//arr[i] = e
@@ -58,10 +58,9 @@ func setValue(intChan chan int) {
 	case intChan <- 7:
 	case intChan <- 8:
 	case intChan <- 9:
-	//case intChan <- 'A':
-	//case intChan <- 'B':
-	//case intChan <- 'C':
-
+		//case intChan <- 'A':
+		//case intChan <- 'B':
+		//case intChan <- 'C':
 
 	}
 }

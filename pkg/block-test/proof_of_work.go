@@ -8,22 +8,22 @@ import (
 	"math/big"
 )
 
-var maxNonce=math.MaxInt64
-const TARGET_BITS  = 16
+var maxNonce = math.MaxInt64
+
+const TARGET_BITS = 16
 
 type ProofOfWork struct {
-	block *Block
+	block  *Block
 	target *big.Int
 }
 
-func NewProofOfWork(b *Block) * ProofOfWork{
-	target := big.NewInt(1);
+func NewProofOfWork(b *Block) *ProofOfWork {
+	target := big.NewInt(1)
 	target.Lsh(target, uint(256-TARGET_BITS))
-	return & ProofOfWork{b, target}
+	return &ProofOfWork{b, target}
 }
 
-
-func (p *ProofOfWork)prepareData(nonce int) []byte{
+func (p *ProofOfWork) prepareData(nonce int) []byte {
 	data := bytes.Join([][]byte{
 		p.block.PrevBlockHash,
 		p.block.Data,

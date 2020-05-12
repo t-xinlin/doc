@@ -1,5 +1,5 @@
 package log
 
-func Log()  {
-	
+func Log() {
+
 }

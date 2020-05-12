@@ -53,6 +53,7 @@ func Base58Decode(input []byte) []byte {
 
 	return decoded
 }
+
 // HashPubKey hashes public key
 func HashPubKey(pubKey []byte) []byte {
 	publicSHA256 := sha256.Sum256(pubKey)

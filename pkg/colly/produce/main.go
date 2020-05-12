@@ -1,6 +1,6 @@
 package produce
 
-func Nothing()  {
+func Nothing() {
 
 }
 

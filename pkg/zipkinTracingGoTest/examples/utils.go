@@ -20,12 +20,11 @@ func GetTracer(serviceName string, ip string) *zipkin.Tracer {
 	// set-up our sampling strategy
 	sampler := zipkin.NewModuloSampler(1)
 
-
 	// initialize the tracer
 	tracer, _ := zipkin.NewTracer(
 		reporter,
 		zipkin.WithLocalEndpoint(endpoint),
 		zipkin.WithSampler(sampler),
 	)
-	return tracer;
+	return tracer
 }

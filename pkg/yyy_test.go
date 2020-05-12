@@ -56,7 +56,6 @@ func Test_interface_struct_equal(t *testing.T) {
 //	return nil, false
 //}
 
-
 //解析
 //考点：函数返回值类型
 //nil 可以用作 interface、function、pointer、map、slice 和 channel 的“空值”。但是如果不特别指定的话，Go 语言不能识别类型，所以会报错。报:cannot use nil as type string in return argument.

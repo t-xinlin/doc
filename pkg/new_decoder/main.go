@@ -17,7 +17,7 @@ func main11() {
 }
 
 //Annotated(位于annotated.go文件) 主要用于采用annotated的方式,提供Provide注入类型
-func fx_uber1(){
+func fx_uber1() {
 	type t3 struct {
 		Name string
 	}
@@ -30,8 +30,8 @@ func fx_uber1(){
 
 	app := fx.New(
 		fx.Provide(fx.Annotated{
-			Name:"n1",
-			Target: func() *t3{
+			Name: "n1",
+			Target: func() *t3 {
 				return &t3{"hello world"}
 			},
 		}),
@@ -143,23 +143,23 @@ func fx_uber() {
 			return strings.NewReader("hello world")
 		}),
 
-		fx.Provide(func() *T3{
+		fx.Provide(func() *T3 {
 			return &T3{"your name"}
 		}),
-		fx.Provide(func() *T4{
+		fx.Provide(func() *T4 {
 			return &T4{19}
 		}),
 
-		fx.Provide(func() Result{
+		fx.Provide(func() Result {
 			return Result{
-				V1:&T3{"v1 name"},
-				V2:&T3{"v2 name"},
+				V1: &T3{"v1 name"},
+				V2: &T3{"v2 name"},
 			}
 		}),
-		fx.Provide(func() ResultG{
+		fx.Provide(func() ResultG {
 			return ResultG{
-				V1:&T3{"v1 name G"},
-				V2:&T3{"v2 name G"},
+				V1: &T3{"v1 name G"},
+				V2: &T3{"v2 name G"},
 			}
 		}),
 		fx.Populate(&reader), // 通过依赖注入完成变量与具体类的映射

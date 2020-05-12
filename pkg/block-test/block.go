@@ -10,11 +10,11 @@ import (
 type Block struct {
 	Timestamp int64
 	//Transactions  []*Transaction
-	Data []byte
+	Data          []byte
 	PrevBlockHash []byte
-	Hash []byte
-	Nonce int
-	Height int
+	Hash          []byte
+	Nonce         int
+	Height        int
 }
 
 // NewBlock creates and returns Block

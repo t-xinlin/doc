@@ -9,6 +9,7 @@ import (
 
 	"go.uber.org/fx"
 )
+
 //在Fx中提供的构造函数都是惰性调用，可以通过invocations在application启动来完成一些必要的初始化工作：fx.Invoke(function); 通过也可以按需自定义实现LiftCycle的Hook对应的OnStart和OnStop用来完成手动启动容器和关闭，来满足一些自己实际的业务需求。
 // Logger构造函数
 func NewLogger() *log.Logger {
@@ -35,7 +36,7 @@ func NewMux(lc fx.Lifecycle, logger *log.Logger) *http.ServeMux {
 		Handler: mux,
 	}
 
-	lc.Append(fx.Hook{  // 自定义生命周期过程对应的启动和关闭的行为
+	lc.Append(fx.Hook{ // 自定义生命周期过程对应的启动和关闭的行为
 		OnStart: func(context.Context) error {
 			logger.Print("Starting HTTP server.")
 			go server.ListenAndServe()
@@ -62,15 +63,15 @@ func main() {
 			NewHandler,
 			NewMux,
 		),
-		fx.Invoke(Register),  // 通过invoke来完成Logger、Handler、ServeMux的创建
+		fx.Invoke(Register), // 通过invoke来完成Logger、Handler、ServeMux的创建
 	)
 	startCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	if err := app.Start(startCtx); err != nil {  // 手动调用Start
+	if err := app.Start(startCtx); err != nil { // 手动调用Start
 		log.Fatal(err)
 	}
 
-	http.Get("http://localhost:8080/")  // 具体操作
+	http.Get("http://localhost:8080/") // 具体操作
 
 	stopCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()

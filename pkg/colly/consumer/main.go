@@ -1,6 +1,6 @@
 package consumer
 
-func Nothing()  {
+func Nothing() {
 
 }
 

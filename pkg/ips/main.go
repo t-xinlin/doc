@@ -5,23 +5,23 @@ import (
 	"net"
 )
 
-func main(){
-	ips, _ :=Ips()
+func main() {
+	ips, _ := Ips()
 	log.Println("ips: ", ips)
 }
 
-func Ips()(map[string]string, error){
-	ips:=make(map[string]string)
+func Ips() (map[string]string, error) {
+	ips := make(map[string]string)
 
 	interfaces, err := net.Interfaces()
-	if err != nil{
+	if err != nil {
 		log.Printf("Interfaces Error: %s", err.Error())
 		return nil, err
 	}
 
-	for _, i := range interfaces{
+	for _, i := range interfaces {
 		byName, err := net.InterfaceByName(i.Name)
-		if err != nil{
+		if err != nil {
 			log.Printf("InterfaceByName Error: %s", err.Error())
 			return nil, err
 		}
@@ -30,7 +30,7 @@ func Ips()(map[string]string, error){
 			log.Printf("byName.Addrs Error: %s", err.Error())
 		}
 
-		for _, v := range address{
+		for _, v := range address {
 			ips[byName.Name] = v.String()
 		}
 	}

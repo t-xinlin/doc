@@ -1,7 +1,9 @@
 package pb
-func Utyyy(){
+
+func Utyyy() {
 
 }
+
 //
 //import (
 //	"fmt"

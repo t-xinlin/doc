@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func main(){
+func main() {
 	//scaner := bufio.NewScanner(os.Stdin)
 	//scaner.Split(bufio.ScanLines)
 	//for scaner.Scan(){

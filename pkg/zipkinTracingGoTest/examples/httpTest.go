@@ -1,4 +1,5 @@
 package examples
+
 import (
 	"log"
 	"net/http"

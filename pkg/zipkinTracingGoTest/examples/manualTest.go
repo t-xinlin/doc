@@ -8,7 +8,7 @@ import (
 func doSomeWork(context.Context) {}
 
 func ExampleNewTracer() {
-	tracer  := GetTracer("demoService","127.0.0.1:9898");
+	tracer := GetTracer("demoService", "127.0.0.1:9898")
 	// tracer can now be used to create spans.
 	span := tracer.StartSpan("some_operation")
 	// ... do some work ...
@@ -22,6 +22,3 @@ func ExampleNewTracer() {
 
 	// Output:
 }
-
-
-
