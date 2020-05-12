@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/t-xinlin/doc/src/blockchain/BLC"
+	"github.com/t-xinlin/doc/pkg/blockchain/BLC"
 )
 
 func main() {

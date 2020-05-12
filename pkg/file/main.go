@@ -1,12 +1,21 @@
 package main
  
 import (
-  
- 
-   "http"
-    "os"
+    "bytes"
+    "crypto/md5"
+    "flag"
+    "fmt"
+    "html/template"
     "io"
+    "io/ioutil"
+    "log"
+    "mime/multipart"
+    "net/http"
+    "net/url"
+    "os"
+    "path"
     "strconv"
+    "time"
 )
  
 const (
@@ -18,16 +27,15 @@ func main() {
     if err != nil { panic(err) }
     stat, err := f.Stat()    //获取文件状态
     if err != nil { panic(err) }
-    f.Seek(stat.Size, 0)    //把文件指针指到文件末，当然你说为何不直接用 O_APPEND 模式打开，没错是可以。我这里只是试验。
-    url := "http://dl.google.com/chrome/install/696.57/chrome_installer.exe"
+    f.Seek(stat.Size(), 0)    //把文件指针指到文件末，当然你说为何不直接用 O_APPEND 模式打开，没错是可以。我这里只是试验。
+    url1 := "http://dl.google.com/chrome/install/696.57/chrome_installer.exe"
     var req http.Request
     req.Method = "GET"
-    req.UserAgent = UA
     req.Close = true
-    req.URL, err = http.ParseURL(url)
+    req.URL, err = url.Parse(url1)
     if err != nil { panic(err) }
     header := http.Header{}
-    header.Set("Range", "bytes=" + strconv.Itoa64(stat.Size) + "-")
+    header.Set("Range", "bytes=" + strconv.Itoa(int(stat.Size())) + "-")
     req.Header = header
     resp, err := http.DefaultClient.Do(&req)
     if err != nil { panic(err) }
@@ -35,22 +43,7 @@ func main() {
     if err != nil { panic(err) }
     println("written: ", written)
 }
- 
- 
-//下载（server）
-package main
- 
-import (
-    "flag"
-    "fmt"
-    "io"
-    "log"
-    "net/http"
-    "os"
-    "path"
-    "strconv"
-)
- 
+
 var dir string
 var port int
 var staticHandler http.Handler
@@ -64,7 +57,7 @@ func init() {
     staticHandler = http.FileServer(http.Dir(dir))
 }
  
-func main() {
+func main11() {
     http.HandleFunc("/", StaticServer)
     err := http.ListenAndServe(":"+strconv.Itoa(port), nil)
     if err != nil {
@@ -84,18 +77,7 @@ func StaticServer(w http.ResponseWriter, req *http.Request) {
 }
  
 //上传（client）
- 
-package main
- 
-import (
-    "bytes"
-    "fmt"
-    "io"
-    "io/ioutil"
-    "mime/multipart"
-    "net/http"
-    "os"
-)
+
  
 func postFile(filename string, targetUrl string) error {
     bodyBuf := &bytes.Buffer{}
@@ -136,32 +118,12 @@ func postFile(filename string, targetUrl string) error {
 }
  
 // sample usage
-func main() {
+func main12() {
     target_url := "http://localhost:9090/upload"
     filename := "./astaxie.pdf"
     postFile(filename, target_url)
 }
- 
-//上传（server）
-package main
- 
-import (
-    "crypto/md5"
-    "flag"
-    "fmt"
-    "html/template"
-    "io"
-    "log"
-    "net/http"
-    "os"
-    "path"
-    "strconv"
-    "time"
-)
- 
-var dir string
-var port int
- 
+
 // 初始化参数
 func init() {
     dir = path.Dir(os.Args[0])
@@ -170,7 +132,7 @@ func init() {
     fmt.Println("dir:", http.Dir(dir))
 }
  
-func main() {
+func main13() {
     http.HandleFunc("/upload", upload)
     err := http.ListenAndServe(":"+strconv.Itoa(port), nil)
     if err != nil {

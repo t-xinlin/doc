@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
-	"github.com/t-xinlin/test/proto/pb"
+	"github.com/t-xinlin/doc/pkg/proto/pb"
 	"io/ioutil"
 	"os"
 )

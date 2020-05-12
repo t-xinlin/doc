@@ -3,17 +3,19 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
-func main() {
+func main1() {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/upload", upload)
 	http.ListenAndServe(":1789", nil)
 }
 
-func upload(w http.ResponseWriter, r *http.Request) {
+func upload1(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(32 << 20)
 	file, handler, err := r.FormFile("uploadfile")
 	if err != nil {
@@ -50,15 +52,8 @@ const tpl = `<html>
 
 //https://github.com/songtianyi/rrframework
 
-package main
-import (
-    "net/http"
-    "os"
-    "io"
-    "strconv"
-)
 
-func main() {
+func main2() {
     f, err := os.OpenFile("K:/file.mp3", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
     stat, err := f.Stat()    //获取文件状态
     if err != nil { panic(err) }  //把文件指针指到文件末，当然你说为何不直接用 O_APPEND 模式打开，没错是可以。我这里只是试验。
@@ -73,13 +68,13 @@ func main() {
 }
 
 
-服务器的话就更简单了，这个是忽略url中的/assets/，直接找到对应的raido目录
+//服务器的话就更简单了，这个是忽略url中的/assets/，直接找到对应的raido目录
 
 
-var staticHandler http.Handler
+var staticHandler1 http.Handler
 
 // 静态文件处理
-func StaticServer(w http.ResponseWriter, req *http.Request) {
+func StaticServer1(w http.ResponseWriter, req *http.Request) {
     fmt.Println("path:" + req.URL.Path)
     staticHandler.ServeHTTP(w, req)
 }
@@ -87,7 +82,7 @@ func init(){
     staticHandler = http.StripPrefix("/assets/", http.FileServer(http.Dir("radio")))
 }
 
-func main() {//已经有静态文件了
+func main3() {//已经有静态文件了
     http.HandleFunc("/assets/",StaticServer)
     err := http.ListenAndServe(":3000", nil)
     if err != nil {
@@ -95,42 +90,42 @@ func main() {//已经有静态文件了
     }
 }
 
-if r.Method == "POST" {
-
-        r.ParseMultipartForm(8 << 20)
-        title := r.ParseFormValue["title"]
-        fhs := r.MultipartForm.File["radio[]"]
-        options := r.MultipartForm.Value["options[]"]
-        answers := r.MultipartForm.Value["answers[]"]
-
-        l := len(options)
-        optionDirs := make([]string, l)
-        t := time.Now()
-        for i := 0; i < l; i++ {
-            file, err := fhs[i].Open()
-            if err != nil {
-                panic(err)
-            }
-            filename := fhs[i].Filename
-            f, err := os.OpenFile("statics/"+filename, os.O_WRONLY|os.O_CREATE, 0666)
-            if err != nil {
-                panic(err)
-            }
-            defer f.Close()
-            io.Copy(f, file)
-            optionDirs = append(optionDirs, filename)
-        }
-        db.InsertHomework(&db.HomeWork{
-            Title:      title,
-            Options:    options,
-            OptionDirs: optionDirs,
-            Answers:    answers,
-            Time:       t,
-        })
-        sess := session.GlobalSessionManager.SessionStart(w, r)
-        if sess != nil {
-            sess.Set("flash", true)
-        }
-        defer sess.SessionRelease()
-        http.Redirect(w, r, "/homeworks", http.StatusFound)
-    }
+//if r.Method == "POST" {
+//
+//        r.ParseMultipartForm(8 << 20)
+//        title := r.ParseFormValue["title"]
+//        fhs := r.MultipartForm.File["radio[]"]
+//        options := r.MultipartForm.Value["options[]"]
+//        answers := r.MultipartForm.Value["answers[]"]
+//
+//        l := len(options)
+//        optionDirs := make([]string, l)
+//        t := time.Now()
+//        for i := 0; i < l; i++ {
+//            file, err := fhs[i].Open()
+//            if err != nil {
+//                panic(err)
+//            }
+//            filename := fhs[i].Filename
+//            f, err := os.OpenFile("statics/"+filename, os.O_WRONLY|os.O_CREATE, 0666)
+//            if err != nil {
+//                panic(err)
+//            }
+//            defer f.Close()
+//            io.Copy(f, file)
+//            optionDirs = append(optionDirs, filename)
+//        }
+//        db.InsertHomework(&db.HomeWork{
+//            Title:      title,
+//            Options:    options,
+//            OptionDirs: optionDirs,
+//            Answers:    answers,
+//            Time:       t,
+//        })
+//        sess := session.GlobalSessionManager.SessionStart(w, r)
+//        if sess != nil {
+//            sess.Set("flash", true)
+//        }
+//        defer sess.SessionRelease()
+//        http.Redirect(w, r, "/homeworks", http.StatusFound)
+//    }

@@ -43,6 +43,7 @@ func main() {
 	http.ListenAndServe("127.0.0.1:9898", nil)
 }
 
+// ICMP is use
 type ICMP struct {
 	Type        uint8
 	Code        uint8
@@ -55,8 +56,10 @@ func init() {
 	//log.Printf("my_test init...")
 }
 
+// DefaultExpireTime is time out
 const DefaultExpireTime = 0
 
+// CheckSum is time out
 func CheckSum(data []byte) uint16 {
 	var (
 		sum    uint32

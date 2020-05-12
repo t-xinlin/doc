@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/t-xinlin/doc/test/workpoolv2/concurrence"
+	"github.com/t-xinlin/doc/pkg/workpoolv2/concurrence"
 	"runtime"
 	"time"
 )

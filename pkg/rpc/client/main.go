@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/t-xinlin/doc/test/rpc/interfaces"
+	"github.com/t-xinlin/doc/pkg/rpc/interfaces"
 	"io/ioutil"
 	"log"
 	"net/http"
