@@ -11,8 +11,8 @@ on:
     branches:
       - master
 jobs:
-  lint:
-    name: Lint
+  codechcker:
+    name: Code Checher
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -21,6 +21,60 @@ jobs:
           go-version: 1.14.2
       - name: Check out code
         uses: actions/checkout@v1
+      - name: Format Checher
+        run: |
+          diff -u <(echo -n) <(find . -name "*.go" -not -path "./vendor/*" -not -path ".git/*" | xargs gofmt -s -d)
+          if [ $? == 0 ]; then
+          	echo "Hurray....all code is formatted properly..."
+          	exit 0
+          else
+          	echo "There is issues's with the code formatting....please run go fmt on your code"
+          	exit 1
+          fi
+      - name: DeadCode Checker
+        run: |
+          go get -u github.com/tsenart/deadcode
+          diff -u <(echo -n) <(find . -type d -not -path "./vendor/*" | xargs deadcode)
+          if [ $? == 0 ]; then
+          	echo "Hurray....all code's are reachable and utilised..."
+          	exit 0
+          else
+          	echo "There are some deadcode in the project...please remove the unused code"
+          	exit 1
+          fi
+      - name: Misspell Checker
+        run: |
+          go get -u github.com/client9/misspell
+          diff -u <(echo -n) <(find . -type f -not -path "./vendor/*" -not -path "./third_party/*" -print0 | xargs -0 misspell)
+          if [ $? == 0 ]; then
+          	echo "No Misspell found"
+          	exit 0
+          else
+          	echo "Misspell found"
+          	exit 1
+          fi
+      - name: GoConst Checker
+        run: |
+          go get -u github.com/jgautheron/goconst/cmd/goconst
+          diff -u <(echo -n) <(goconst ./... | grep -v vendor | grep -v third_party)
+          if [ $? == 0 ]; then
+          	echo "No goConst problem"
+          	exit 0
+          else
+          	echo "Has goConst Problem"
+          	exit 1
+          fi
+      - name: GoCyclo Checker
+        run: |
+          go get github.com/fzipp/gocyclo
+          diff -u <(echo -n) <(find . -name "*.go" -not -path "./vendor/*" -not -path ".git/*" -not -path "./third_party/*" | grep -v _test | xargs gocyclo -over 16)
+          if [ $? == 0 ]; then
+          	echo "All function has less cyclomatic complexity..."
+          	exit 0
+          else
+          	echo "Fucntions/function has more cyclomatic complexity..."
+          	exit 1
+          fi
       - name: Lint Go Code
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin  # temporary fix. See https://github.com/actions/setup-go/issues/14
