@@ -11,7 +11,7 @@ for d in $(go list ./...); do
     if [ $(ls | grep _test.go | wc -l) -gt 0 ]; then
         go test -v -cover -covermode atomic -coverprofile coverage.out
         if [ -f coverage.out ]; then
-            sed '1d;$d' coverage.out >> $GOPATH/src/github.com/go-chassis/go-chassis/coverage.txt
+            sed '1d;$d' coverage.out >> coverage.txt
         fi
     fi
 done

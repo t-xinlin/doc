@@ -43,8 +43,7 @@ jobs:
           fi
       - name: Run Unit tests.
         run: |
-          go test -short -coverprofile cover.out -covermode=atomic $(go list ./... | grep -v /vendor/)
-          cat cover.out >> coverage.txt
+          bash -x scripts/unit_test.sh
   build:
     name: Build
     runs-on: ubuntu-latest
