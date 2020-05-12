@@ -32,7 +32,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/t-xinlin/doc/test/mutex/pubsub"
+	"github.com/t-xinlin/doc/pkg/mutex/pubsub"
 	"os"
 	"os/signal"
 	"strings"
