@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/t-xinlin/test/proto/pb"
+	"github.com/t-xinlin/doc/pkg/proto/pb"
 	"google.golang.org/grpc"
 	"log"
 	"os"

@@ -1,1 +1,5 @@
-packege log
+package log
+
+func Log()  {
+	
+}
