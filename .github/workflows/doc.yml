@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-go@v1 # 要引用的 actions，这里用 setup-go 来进行 go 环境的安装
         with: # 指定 actions 的入参
           go-version: ${{ matrix.go_version }}
-        id: go # 参考 https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsid ，不知道怎么解释 Orz
+        id: go  # 参考 https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsid ，不知道怎么解释 Orz
       - name: Check out code into the Go module directory
         uses: actions/checkout@v1
       - name: Get dependencies # 安装项目依赖
