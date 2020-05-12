@@ -85,7 +85,7 @@ func (m *Mutex) Lock() (err error) {
 
 		m.debug("Lock node %v ERROR %v", m.key, err)
 		if try < defaultTry {
-			m.debug("Try to lock node %v again", m.key, err)
+			m.debug("Try to lock node %v again Error %v", m.key, err)
 		}
 	}
 	return err

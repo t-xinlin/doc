@@ -14,7 +14,7 @@ const defaultName = "world"
 func main() {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if nil != err {
-		log.Fatal("did not connect %+v", address)
+		log.Fatal("did not connect ", address)
 	}
 	if nil != conn {
 		defer conn.Close()
@@ -28,7 +28,7 @@ func main() {
 	for {
 		r, err := c.SayHello(context.Background(), &pb.HelloRequest{Name: name})
 		if nil != err {
-			log.Fatal("could not greet:%+v", err)
+			log.Fatal("could not greet ", err)
 		}
 		log.Printf("Re: %s", r.Message)
 	}
