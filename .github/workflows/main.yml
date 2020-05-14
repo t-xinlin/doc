@@ -74,7 +74,8 @@ jobs:
         run: |
           go get github.com/mattn/goveralls
           go get golang.org/x/tools/cmd/cover
-          go test -short -coverprofile cover.out -covermode=atomic $(go list ./... | grep -v /vendor/)
+          go test -short -coverprofile coverage.out -covermode=atomic $(go list ./... | grep -v /vendor/)
+          cat coverage.out >> coverage.txt
       - name: Upload Test Coverage
         uses: codecov/codecov-action@v1
         with:
