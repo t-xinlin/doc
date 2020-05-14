@@ -1,4 +1,4 @@
-diff -u <(echo -n) <(find . -type d -not -path "./vendor/*" -not -path "./third_party/*"| xargs go vet )
+diff -u <(echo -n) <(find . -type d -not -path "*/vendor/*" -not -path "*/third_party/*"| xargs go vet )
 if [ $? == 0 ]; then
 	echo "Hurray....all OKAY..."
 	exit 0
