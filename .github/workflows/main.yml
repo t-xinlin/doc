@@ -23,28 +23,28 @@ jobs:
         uses: actions/checkout@v1
       - name: Format Checher
         run: |
-          bash -x scripts/travis/formatChecker.sh
+          bash -x scripts/formatChecker.sh
       - name: DeadCode Checker
         run: |
           go get -u github.com/tsenart/deadcode
-          bash -x scripts/travis/deadCodeChecker.sh
+          bash -x scripts/deadCodeChecker.sh
       - name: Misspell Checker
         run: |
           go get -u github.com/client9/misspell
-          bash -x scripts/travis/misspellChecker.sh
+          bash -x scripts/misspellChecker.sh
       - name: GoConst Checker
         run: |
           go get -u github.com/jgautheron/goconst/cmd/goconst
-          bash -x scripts/travis/goConstChecker.sh
+          bash -x scripts/goConstChecker.sh
       - name: GoCyclo Checker
         run: |
           go get github.com/fzipp/gocyclo
-          bash -x scripts/travis/goCycloChecker.sh
+          bash -x scripts/goCycloChecker.sh
       - name: Lint Go Code
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin  # temporary fix. See https://github.com/actions/setup-go/issues/14
           go get -u golang.org/x/lint/golint
-          bash -x scripts/travis/goLintChecker.sh
+          bash -x scripts/goLintChecker.sh
           echo "PASS"
 #          golint -set_exit_status $(go list ./... | grep -v /vendor/)
 
