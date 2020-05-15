@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/spf13/cast"
 	"io/ioutil"
 	"log"
 	"net/http"
-    "github.com/spf13/cast"
 )
-
 
 // Version is the build version
 var Version string
