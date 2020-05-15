@@ -7,7 +7,7 @@ require (
 	github.com/boltdb/bolt v1.3.1
 	github.com/coreos/etcd v3.3.20+incompatible
 	github.com/golang/protobuf v1.4.1
-	github.com/google/uuid v1.1.1 // indirect
+	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4
 	github.com/json-iterator/go v1.1.9
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
@@ -16,11 +16,16 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.6.0
+	github.com/spf13/cast v1.3.0
 	github.com/spf13/cobra v1.0.0
 	github.com/stretchr/testify v1.4.0
 	go.uber.org/fx v1.12.0
 	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
+	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
+	golang.org/x/tools v0.0.0-20200513201620-d5fe73897c97 // indirect
 	google.golang.org/grpc v1.29.1
 	gopkg.in/yaml.v2 v2.2.8
 )
+
+replace github.com/spf13/cast v1.3.0 => ./third_party/github.com/spf13/cast

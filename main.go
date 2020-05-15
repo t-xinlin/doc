@@ -5,7 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+    "github.com/spf13/cast"
 )
+
 
 // Version is the build version
 var Version string
@@ -17,6 +19,7 @@ var GitTag string
 var BuildDate string
 
 func main() {
+	cast.ToBool(true)
 	fmt.Printf("Version: %s, GitTag: %s, BuildDate: %s\n", Version, GitTag, BuildDate)
 	http.HandleFunc("/spans", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
