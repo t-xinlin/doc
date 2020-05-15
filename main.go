@@ -16,7 +16,6 @@ var GitTag string
 // BuildDate is the date when the build was created
 var BuildDate string
 
-
 func main() {
 	fmt.Printf("Version: %s, GitTag: %s, BuildDate: %s\n", Version, GitTag, BuildDate)
 	http.HandleFunc("/spans", func(w http.ResponseWriter, r *http.Request) {
