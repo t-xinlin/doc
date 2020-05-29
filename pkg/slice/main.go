@@ -1,8 +1,10 @@
 package main
 
 import "fmt"
+import lager "github.com/t-xinlin/doc/internal/log"
 
 func main() {
+	lager.Log()
 	s1 := []int{1, 2, 3}
 	fmt.Println(len(s1), cap(s1), s1) //prints 3 3 [1 2 3]
 
